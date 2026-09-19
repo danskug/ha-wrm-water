@@ -36,6 +36,9 @@
       },
       "last_hour_liters": {
         "name": "Viimeisin tunti"
+      },
+      "last_reported": {
+        "name": "Viimeisin lähetys"
       }
     }
   }

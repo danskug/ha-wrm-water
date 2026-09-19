@@ -36,6 +36,9 @@
       },
       "last_hour_liters": {
         "name": "Last Hour"
+      },
+      "last_reported": {
+        "name": "Last Reported"
       }
     }
   }

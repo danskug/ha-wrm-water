@@ -65,6 +65,7 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
 | `sensor.kaarina_water_daily_liters` | L | Today's consumption in liters. |
 | `sensor.kaarina_water_monthly` | $m^3$ | Current month's consumption. |
 | `sensor.kaarina_water_last_hour_liters` | L | Consumption during the latest reported hour. |
+| `sensor.kaarina_water_last_reported` | timestamp | Timestamp when the water meter last transmitted data. |
 
 ---
 

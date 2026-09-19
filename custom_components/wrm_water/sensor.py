@@ -1,6 +1,7 @@
 """Sensor platform for WRM Systems Water."""
 from __future__ import annotations
 
+import datetime
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -33,6 +34,7 @@ async def async_setup_entry(
             KaarinaWaterTodaySensor(coordinator, entry),
             KaarinaWaterMonthlySensor(coordinator, entry),
             KaarinaWaterLastHourSensor(coordinator, entry),
+            KaarinaWaterLastReportedSensor(coordinator, entry),
         ]
     )
 
@@ -187,3 +189,28 @@ class KaarinaWaterLastHourSensor(BaseWRMWaterSensor):
         if not self.coordinator.data:
             return None
         return self.coordinator.data.get("last_hour_liters")
+
+
+class KaarinaWaterLastReportedSensor(BaseWRMWaterSensor):
+    """Sensor showing when the water meter data was last reported."""
+
+    _attr_translation_key = "last_reported"
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+    _attr_icon = "mdi:clock-check-outline"
+
+    def __init__(
+        self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
+    ) -> None:
+        super().__init__(coordinator, entry, "last_reported")
+        self.entity_id = "sensor.kaarina_water_last_reported"
+
+    @property
+    def native_value(self) -> datetime.datetime | None:
+        """Return the timestamp when water meter data was last reported."""
+        if not self.coordinator.data:
+            return None
+        epoch = self.coordinator.data.get("last_timestamp")
+        if not epoch:
+            return None
+        return datetime.datetime.fromtimestamp(int(epoch), tz=datetime.timezone.utc)
+

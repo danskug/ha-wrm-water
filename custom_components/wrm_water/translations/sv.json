@@ -36,6 +36,9 @@
       },
       "last_hour_liters": {
         "name": "Senaste timmen"
+      },
+      "last_reported": {
+        "name": "Senast uppdaterad"
       }
     }
   }

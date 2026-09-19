@@ -48,12 +48,6 @@
       "meter_reading": {
         "name": "Vesimittari"
       },
-      "yesterday_liters": {
-        "name": "Eilinen"
-      },
-      "monthly_consumption": {
-        "name": "Kuukausi"
-      },
       "last_reported": {
         "name": "Viimeisin lähetys"
       }

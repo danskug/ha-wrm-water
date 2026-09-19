@@ -17,13 +17,9 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
 - 💧 **Automated Hourly Long-Term Statistics (LTS)**:
   Water utilities report data in daily batches. Unlike standard scrapers that dump the entire day's consumption as a single clump when polled, this integration automatically backfills every single past hour (`async_import_statistics`) to its exact historical timestamp.
 - ⚡ **Seamless Energy Dashboard Integration**:
-  The main water meter reading (`m³`) plugs directly into Home Assistant's official Energy Dashboard.
-- 📊 **Dedicated Daily & Monthly Sensors**:
-  - Yesterday's total consumption in liters (L) — perfect for wall tablets and dashboard cards (*"Eilen: 337 L"*).
-  - Current month's consumption ($m^3$).
-  - Timestamp when the water meter last transmitted data.
+  The main water meter reading (`m³`) plugs directly into Home Assistant's official Energy Dashboard for hourly, daily, monthly, and yearly consumption tracking.
 - 🕒 **Smart History Backfill & Lightweight Periodic Polling**:
-  Choose how much history to import on setup or in Options Flow (7 days, 30 days, 90 days, 1 year, or All history since meter installation). Routine 4-hour polling only fetches a rolling 7-day window to minimize network traffic and portal load.
+  Choose how much history to import on setup or in Options Flow (7 days, 30 days, 90 days, 1 year, or All history since meter installation). Routine 4-hour polling fetches a rolling 2-day (48-hour) window to minimize network traffic and portal load.
 - 🔒 **Zero External Dependencies**:
   Built using Python standard library tools (`html.parser`, `urllib`, `http.cookiejar`) with automatic CSRF token handling and session re-authentication.
 - 🌐 **Full Localization**:
@@ -101,8 +97,6 @@ The following 17 water utilities are verified and available directly in the setu
 | Entity ID | Unit | Description |
 | :--- | :--- | :--- |
 | `sensor.kaarina_water_meter_reading` | $m^3$ | Cumulative water meter reading. Configurable in Energy Dashboard. |
-| `sensor.kaarina_water_yesterday_liters` | L | Yesterday's verified total consumption in liters. |
-| `sensor.kaarina_water_monthly` | $m^3$ | Current month's consumption. |
 | `sensor.kaarina_water_last_reported` | timestamp | Timestamp when the water meter last transmitted data. |
 
 ---

@@ -31,8 +31,6 @@ async def async_setup_entry(
     async_add_entities(
         [
             KaarinaWaterMeterReadingSensor(coordinator, entry),
-            KaarinaWaterYesterdaySensor(coordinator, entry),
-            KaarinaWaterMonthlySensor(coordinator, entry),
             KaarinaWaterLastReportedSensor(coordinator, entry),
         ]
     )
@@ -108,57 +106,6 @@ class KaarinaWaterMeterReadingSensor(BaseWRMWaterSensor):
             "last_hour_consumption_l": self.coordinator.data.get("last_hour_liters"),
             "last_timestamp": self.coordinator.data.get("last_timestamp"),
         }
-
-
-class KaarinaWaterYesterdaySensor(BaseWRMWaterSensor):
-    """Yesterday's total water consumption in liters."""
-
-    _attr_translation_key = "yesterday_liters"
-    _attr_device_class = SensorDeviceClass.WATER
-    _attr_native_unit_of_measurement = UnitOfVolume.LITERS
-    _attr_icon = "mdi:water"
-
-    def __init__(
-        self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
-    ) -> None:
-        super().__init__(coordinator, entry, "yesterday_liters")
-        if self.clean_subdomain == "kaarinanvesihuolto":
-            self.entity_id = "sensor.kaarina_water_yesterday_liters"
-        else:
-            self.entity_id = f"sensor.{self.clean_subdomain}_yesterday_liters"
-
-    @property
-    def native_value(self) -> float | None:
-        """Return yesterday's total water consumption in liters."""
-        if not self.coordinator.data:
-            return None
-        return self.coordinator.data.get("yesterday_liters")
-
-
-class KaarinaWaterMonthlySensor(BaseWRMWaterSensor):
-    """Current month's water consumption in m³."""
-
-    _attr_translation_key = "monthly_consumption"
-    _attr_device_class = SensorDeviceClass.WATER
-    _attr_native_unit_of_measurement = UnitOfVolume.CUBIC_METERS
-    _attr_icon = "mdi:calendar-month"
-    _attr_state_class = SensorStateClass.TOTAL_INCREASING
-
-    def __init__(
-        self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
-    ) -> None:
-        super().__init__(coordinator, entry, "monthly_consumption")
-        if self.clean_subdomain == "kaarinanvesihuolto":
-            self.entity_id = "sensor.kaarina_water_monthly"
-        else:
-            self.entity_id = f"sensor.{self.clean_subdomain}_monthly"
-
-    @property
-    def native_value(self) -> float | None:
-        """Return the current month's water consumption in m³."""
-        if not self.coordinator.data:
-            return None
-        return self.coordinator.data.get("month_m3")
 
 
 class KaarinaWaterLastReportedSensor(BaseWRMWaterSensor):

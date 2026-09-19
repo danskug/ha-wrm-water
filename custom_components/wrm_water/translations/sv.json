@@ -48,12 +48,6 @@
       "meter_reading": {
         "name": "Vattenmätare"
       },
-      "yesterday_liters": {
-        "name": "Igår"
-      },
-      "monthly_consumption": {
-        "name": "Månad"
-      },
       "last_reported": {
         "name": "Senast uppdaterad"
       }

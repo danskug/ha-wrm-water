@@ -199,10 +199,10 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 history_days,
             )
         else:
-            # Routine periodic poll: rolling 7 days is plenty to catch any delayed readings
-            start_date = (now_utc - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+            # Routine periodic poll: rolling 2-day window (48 hours) to catch new readings
+            start_date = (now_utc - datetime.timedelta(days=2)).strftime("%Y-%m-%d")
             _LOGGER.debug(
-                "Routine periodic poll: fetching rolling 7-day readings from %s",
+                "Routine periodic poll: fetching rolling 2-day readings from %s",
                 start_date,
             )
 
@@ -226,32 +226,7 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Reverse to chronological order (oldest first)
         chronological_data = list(reversed(raw_data))
 
-        # 1. Group by local Finnish calendar day
-        # In WRM: dt_str format is "D.M.YYYY H:MM"
-        today_str = datetime.date.today().strftime("%Y-%m-%d")
-        yesterday_str = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        current_month_prefix = datetime.date.today().strftime("%Y-%m")
-
-        daily_liters: dict[str, float] = {}
-        month_liters = 0.0
-
-        for row in chronological_data:
-            dt_str, _, hour_m3, _ = row
-            date_part = dt_str.split(" ")[0]
-            d, m, y = [int(x) for x in date_part.split(".")]
-            day_key = f"{y:04d}-{m:02d}-{d:02d}"
-
-            liters = float(hour_m3) * 1000.0
-            daily_liters[day_key] = daily_liters.get(day_key, 0.0) + liters
-
-            if day_key.startswith(current_month_prefix):
-                month_liters += liters
-
-        yesterday_liters = round(daily_liters.get(yesterday_str, 0.0), 0)
-        today_liters = round(daily_liters.get(today_str, 0.0), 0)
-        month_m3 = round(month_liters / 1000.0, 3)
-
-        # 2. Automatically import hourly statistics into Home Assistant LTS
+        # Automatically import hourly statistics into Home Assistant LTS
         try:
             await self._async_import_lts_statistics(chronological_data)
         except Exception as err:
@@ -259,12 +234,9 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         return {
             "current_reading_m3": current_reading_m3,
-            "yesterday_liters": yesterday_liters,
-            "today_liters": today_liters,
-            "last_hour_liters": last_hour_liters,
-            "month_m3": month_m3,
             "last_reported": last_reported,
             "last_timestamp": last_timestamp,
+            "last_hour_liters": last_hour_liters,
             "readings": chronological_data,
         }
 
@@ -311,6 +283,21 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 prev_cum = cum_float
             except Exception as e:
                 _LOGGER.warning("Skipping malformed row for LTS: %s (%s)", row, e)
+
+        # Also fill from latest reading up to current hour so HA recorder doesn't create an unaligned sum
+        now_hour = datetime.datetime.now(datetime.timezone.utc).replace(minute=0, second=0, microsecond=0)
+        if prev_dt is not None and prev_cum is not None and prev_dt < now_hour:
+            gap_hours = int((now_hour - prev_dt).total_seconds() // 3600)
+            if 0 < gap_hours <= 48:
+                for step in range(1, gap_hours + 1):
+                    fill_dt = prev_dt + datetime.timedelta(hours=step)
+                    stats.append(
+                        StatisticData(
+                            start=fill_dt,
+                            state=prev_cum,
+                            sum=prev_cum,
+                        )
+                    )
 
         if stats:
             metadata = StatisticMetaData(

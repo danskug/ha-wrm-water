@@ -48,12 +48,6 @@
       "meter_reading": {
         "name": "Water Meter Reading"
       },
-      "yesterday_liters": {
-        "name": "Yesterday"
-      },
-      "monthly_consumption": {
-        "name": "Monthly Consumption"
-      },
       "last_reported": {
         "name": "Last Reported"
       }

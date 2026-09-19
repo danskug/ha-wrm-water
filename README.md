@@ -61,7 +61,7 @@ Click the button below to add this repository directly to your Home Assistant in
 3. Enter your portal credentials:
    - **Customer / Payer Number (Maksajan numero)**: Found on your water bill (e.g. `12345`).
    - **Meter Serial Number (Mittarin sarjanumero)**: Printed on your Axioma water meter (e.g. `01234567`).
-   - **Portal Subdomain**: The identifier in your utility's portal URL `https://wmd.wrm-systems.fi/<subdomain>` (default: `kaarinanvesihuolto`).
+   - **Water Utility / Subdomain**: Select your water utility from the searchable dropdown list (default: `Kaarinan Vesihuolto`), or type a custom subdomain if your utility is not in the list.
    - **History to Import**: Choose how far back in time to import hourly history into Home Assistant.
 4. Click **Submit**.
 

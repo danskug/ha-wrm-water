@@ -21,6 +21,7 @@ from .const import (
     DEFAULT_SUBDOMAIN,
     DOMAIN,
     HISTORY_DAYS_OPTIONS,
+    SUBDOMAIN_OPTIONS,
 )
 from .coordinator import WRMClient
 
@@ -30,7 +31,13 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_CUSTOMER_ID): str,
         vol.Required(CONF_METER_SERIAL): str,
-        vol.Required(CONF_SUBDOMAIN, default=DEFAULT_SUBDOMAIN): str,
+        vol.Required(CONF_SUBDOMAIN, default=DEFAULT_SUBDOMAIN): selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=SUBDOMAIN_OPTIONS,
+                custom_value=True,
+                mode=selector.SelectSelectorMode.DROPDOWN,
+            )
+        ),
         vol.Required(CONF_HISTORY_DAYS, default=DEFAULT_HISTORY_DAYS): selector.SelectSelector(
             selector.SelectSelectorConfig(
                 options=HISTORY_DAYS_OPTIONS,
@@ -64,7 +71,7 @@ class WRMWaterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             customer_id = user_input[CONF_CUSTOMER_ID].strip()
             meter_serial = user_input[CONF_METER_SERIAL].strip()
-            subdomain = user_input[CONF_SUBDOMAIN].strip()
+            subdomain = user_input[CONF_SUBDOMAIN].strip().lower()
             history_days = user_input.get(CONF_HISTORY_DAYS, DEFAULT_HISTORY_DAYS)
 
             await self.async_set_unique_id(f"{DOMAIN}_{meter_serial}")
@@ -86,8 +93,13 @@ class WRMWaterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
 
             if not errors:
+                subdomain_labels = {
+                    opt["value"]: opt["label"].split(" (")[0] for opt in SUBDOMAIN_OPTIONS
+                }
                 if subdomain == "kaarinanvesihuolto":
                     entry_title = f"Kaarinan Vesi ({meter_serial})"
+                elif subdomain in subdomain_labels:
+                    entry_title = f"{subdomain_labels[subdomain]} ({meter_serial})"
                 else:
                     friendly_sub = subdomain.replace("-", " ").replace("_", " ").title()
                     entry_title = f"{friendly_sub} ({meter_serial})"

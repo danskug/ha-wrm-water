@@ -7,7 +7,7 @@
         "data": {
           "customer_id": "Maksajan numero (login-input-a)",
           "meter_serial": "Vesimittarin sarjanumero (login-input-b)",
-          "subdomain": "Portaalin aliverkkotunnus (esim. kaarinanvesihuolto, sastamalanvesi)",
+          "subdomain": "Vesilaitos / Aliverkkotunnus",
           "history_days": "Tuotava historia"
         }
       }

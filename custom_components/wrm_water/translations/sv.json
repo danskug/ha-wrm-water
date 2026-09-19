@@ -7,7 +7,7 @@
         "data": {
           "customer_id": "Kund- / Betalarnummer (login-input-a)",
           "meter_serial": "Vattenmätarens serienummer (login-input-b)",
-          "subdomain": "Portalens underdomän (t.ex. kaarinanvesihuolto, sastamalanvesi)",
+          "subdomain": "Vattenverk / Underdomän",
           "history_days": "Historik att importera"
         }
       }

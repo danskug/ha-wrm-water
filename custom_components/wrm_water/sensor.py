@@ -7,6 +7,7 @@ from typing import Any
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
+    SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfVolume
@@ -73,9 +74,7 @@ class KaarinaWaterMeterReadingSensor(BaseWRMWaterSensor):
     _attr_translation_key = "meter_reading"
     _attr_device_class = SensorDeviceClass.WATER
     _attr_native_unit_of_measurement = UnitOfVolume.CUBIC_METERS
-    # NOTE: state_class is deliberately None to prevent HA Core's live recorder from
-    # creating coarse jumps/clumps. All LTS data is imported directly via async_import_statistics.
-    _attr_state_class = None
+    _attr_state_class = SensorStateClass.TOTAL_INCREASING
 
     def __init__(
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
@@ -132,6 +131,7 @@ class KaarinaWaterTodaySensor(BaseWRMWaterSensor):
     _attr_device_class = SensorDeviceClass.WATER
     _attr_native_unit_of_measurement = UnitOfVolume.LITERS
     _attr_icon = "mdi:water-pump"
+    _attr_state_class = SensorStateClass.TOTAL
 
     def __init__(
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
@@ -154,6 +154,7 @@ class KaarinaWaterMonthlySensor(BaseWRMWaterSensor):
     _attr_device_class = SensorDeviceClass.WATER
     _attr_native_unit_of_measurement = UnitOfVolume.CUBIC_METERS
     _attr_icon = "mdi:calendar-month"
+    _attr_state_class = SensorStateClass.TOTAL_INCREASING
 
     def __init__(
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry

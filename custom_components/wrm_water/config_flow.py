@@ -31,7 +31,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_CUSTOMER_ID): str,
         vol.Required(CONF_METER_SERIAL): str,
-        vol.Required(CONF_SUBDOMAIN, default=DEFAULT_SUBDOMAIN): selector.SelectSelector(
+        vol.Required(CONF_SUBDOMAIN): selector.SelectSelector(
             selector.SelectSelectorConfig(
                 options=SUBDOMAIN_OPTIONS,
                 custom_value=True,

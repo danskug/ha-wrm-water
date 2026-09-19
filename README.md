@@ -8,7 +8,7 @@
 [![GitHub release](https://img.shields.io/github/v/release/danskug/ha-wrm-water)](https://github.com/danskug/ha-wrm-water/releases)
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=danskug&repository=ha-wrm-water&category=integration)
 
-Home Assistant integration for remote-read smart water meters connected to **WRM Systems** (`wmd.wrm-systems.fi`), including **Kaarinan Vesihuolto** and numerous Finnish municipal water utilities and cooperatives using Axioma Qalcosonic W1 ultrasonic meters.
+Home Assistant integration for remote-read smart water meters connected to **WRM Systems** (`wmd.wrm-systems.fi`). **Tested and verified in production with Kaarinan Vesihuolto**, and supports numerous Finnish municipal water utilities and cooperatives using Axioma Qalcosonic W1 ultrasonic meters.
 
 ---
 
@@ -20,9 +20,7 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
   The main water meter reading (`m³`) plugs directly into Home Assistant's official Energy Dashboard.
 - 📊 **Dedicated Daily & Monthly Sensors**:
   - Yesterday's total consumption in liters (L) — perfect for wall tablets and dashboard cards (*"Eilen: 337 L"*).
-  - Today's preliminary consumption (L).
   - Current month's consumption ($m^3$).
-  - Consumption in the last reported hour (L).
   - Timestamp when the water meter last transmitted data.
 - 🕒 **Smart History Backfill & Lightweight Periodic Polling**:
   Choose how much history to import on setup or in Options Flow (7 days, 30 days, 90 days, 1 year, or All history since meter installation). Routine 4-hour polling only fetches a rolling 7-day window to minimize network traffic and portal load.
@@ -61,7 +59,7 @@ Click the button below to add this repository directly to your Home Assistant in
 3. Enter your portal credentials:
    - **Customer / Payer Number (Maksajan numero)**: Found on your water bill (e.g. `12345`).
    - **Meter Serial Number (Mittarin sarjanumero)**: Printed on your Axioma water meter (e.g. `01234567`).
-   - **Water Utility / Subdomain**: Select your water utility from the searchable dropdown list (default: `Kaarinan Vesihuolto`), or type a custom subdomain if your utility is not in the list.
+   - **Water Utility / Subdomain**: Select your water utility from the searchable dropdown list, or type a custom subdomain if your utility is not in the list.
    - **History to Import**: Choose how far back in time to import hourly history into Home Assistant.
 4. Click **Submit**.
 
@@ -71,27 +69,30 @@ Click the button below to add this repository directly to your Home Assistant in
 
 Any water utility using the WRM Systems platform (`wmd.wrm-systems.fi`) is supported. Subdomains on WRM Systems are all lowercase and do not contain hyphens or spaces. To find your subdomain, open your water utility's consumption portal login page in your browser — the subdomain is the part of the web address immediately following `wmd.wrm-systems.fi/`.
 
-The following 17 water utilities have been directly tested and verified:
+> [!NOTE]
+> The integration is **tested and verified in production with Kaarinan Vesihuolto**.
 
-| Subdomain | Water Utility / Municipality | Portal URL |
+The following 17 water utilities are verified and available directly in the setup dropdown:
+
+| Subdomain | Water Utility / Municipality | Status / Notes |
 | :--- | :--- | :--- |
-| `kaarinanvesihuolto` *(Default)* | Kaarinan Vesihuolto | `https://wmd.wrm-systems.fi/kaarinanvesihuolto` |
-| `oulunvesi` | Oulun Vesi | `https://wmd.wrm-systems.fi/oulunvesi` |
-| `salonvesi` | Salon Vesi -liikelaitos | `https://wmd.wrm-systems.fi/salonvesi` |
-| `seinajoenvesi` | Seinäjoen Vesi | `https://wmd.wrm-systems.fi/seinajoenvesi` |
-| `kajaaninvesi` | Kajaanin Vesi | `https://wmd.wrm-systems.fi/kajaaninvesi` |
-| `kirkkonummenvesi` | Kirkkonummen Vesi | `https://wmd.wrm-systems.fi/kirkkonummenvesi` |
-| `kangasalanvesi` | Kangasalan Vesi | `https://wmd.wrm-systems.fi/kangasalanvesi` |
-| `sastamalanvesi` | Sastamalan Vesi Liikelaitos | `https://wmd.wrm-systems.fi/sastamalanvesi` |
-| `ylojarvenvesi` | Ylöjärven Vesi | `https://wmd.wrm-systems.fi/ylojarvenvesi` |
-| `vihdinvesi` | Vihdin Vesi | `https://wmd.wrm-systems.fi/vihdinvesi` |
-| `orimattilanvesi` | Orimattilan Vesi | `https://wmd.wrm-systems.fi/orimattilanvesi` |
-| `loimaanvesi` | Loimaan Vesi | `https://wmd.wrm-systems.fi/loimaanvesi` |
-| `suonenjoenvesi` | Suonenjoen Vesi | `https://wmd.wrm-systems.fi/suonenjoenvesi` |
-| `vaalanvesijalampo` | Vaalan Vesi ja Lämpö | `https://wmd.wrm-systems.fi/vaalanvesijalampo` |
-| `keskisavonvesi` | Keski-Savon Vesi | `https://wmd.wrm-systems.fi/keskisavonvesi` |
-| `lumijoenvesi` | Lumijoen Vesi Oy | `https://wmd.wrm-systems.fi/lumijoenvesi` |
-| `pyhaluostovesi` | Pyhä-Luosto Vesi Oy | `https://wmd.wrm-systems.fi/pyhaluostovesi` |
+| `kaarinanvesihuolto` | Kaarinan Vesihuolto | **Tested & verified in production** |
+| `kajaaninvesi` | Kajaanin Vesi | Verified portal |
+| `kangasalanvesi` | Kangasalan Vesi | Verified portal |
+| `keskisavonvesi` | Keski-Savon Vesi | Verified portal |
+| `kirkkonummenvesi` | Kirkkonummen Vesi | Verified portal |
+| `loimaanvesi` | Loimaan Vesi | Verified portal |
+| `lumijoenvesi` | Lumijoen Vesi Oy | Verified portal |
+| `orimattilanvesi` | Orimattilan Vesi | Verified portal |
+| `oulunvesi` | Oulun Vesi | Verified portal |
+| `pyhaluostovesi` | Pyhä-Luosto Vesi Oy | Verified portal |
+| `salonvesi` | Salon Vesi -liikelaitos | Verified portal |
+| `sastamalanvesi` | Sastamalan Vesi Liikelaitos | Verified portal |
+| `seinajoenvesi` | Seinäjoen Vesi | Verified portal |
+| `suonenjoenvesi` | Suonenjoen Vesi | Verified portal |
+| `vaalanvesijalampo` | Vaalan Vesi ja Lämpö | Verified portal |
+| `vihdinvesi` | Vihdin Vesi | Verified portal |
+| `ylojarvenvesi` | Ylöjärven Vesi | Verified portal |
 
 ---
 
@@ -101,9 +102,7 @@ The following 17 water utilities have been directly tested and verified:
 | :--- | :--- | :--- |
 | `sensor.kaarina_water_meter_reading` | $m^3$ | Cumulative water meter reading. Configurable in Energy Dashboard. |
 | `sensor.kaarina_water_yesterday_liters` | L | Yesterday's verified total consumption in liters. |
-| `sensor.kaarina_water_daily_liters` | L | Today's consumption in liters. |
 | `sensor.kaarina_water_monthly` | $m^3$ | Current month's consumption. |
-| `sensor.kaarina_water_last_hour_liters` | L | Consumption during the latest reported hour. |
 | `sensor.kaarina_water_last_reported` | timestamp | Timestamp when the water meter last transmitted data. |
 
 ---

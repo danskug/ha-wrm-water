@@ -32,9 +32,7 @@ async def async_setup_entry(
         [
             KaarinaWaterMeterReadingSensor(coordinator, entry),
             KaarinaWaterYesterdaySensor(coordinator, entry),
-            KaarinaWaterTodaySensor(coordinator, entry),
             KaarinaWaterMonthlySensor(coordinator, entry),
-            KaarinaWaterLastHourSensor(coordinator, entry),
             KaarinaWaterLastReportedSensor(coordinator, entry),
         ]
     )
@@ -137,32 +135,6 @@ class KaarinaWaterYesterdaySensor(BaseWRMWaterSensor):
         return self.coordinator.data.get("yesterday_liters")
 
 
-class KaarinaWaterTodaySensor(BaseWRMWaterSensor):
-    """Today's preliminary water consumption in liters."""
-
-    _attr_translation_key = "today_liters"
-    _attr_device_class = SensorDeviceClass.WATER
-    _attr_native_unit_of_measurement = UnitOfVolume.LITERS
-    _attr_icon = "mdi:water-pump"
-    _attr_state_class = SensorStateClass.TOTAL
-
-    def __init__(
-        self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
-    ) -> None:
-        super().__init__(coordinator, entry, "today_liters")
-        if self.clean_subdomain == "kaarinanvesihuolto":
-            self.entity_id = "sensor.kaarina_water_daily_liters"
-        else:
-            self.entity_id = f"sensor.{self.clean_subdomain}_daily_liters"
-
-    @property
-    def native_value(self) -> float | None:
-        """Return today's water consumption in liters."""
-        if not self.coordinator.data:
-            return None
-        return self.coordinator.data.get("today_liters")
-
-
 class KaarinaWaterMonthlySensor(BaseWRMWaterSensor):
     """Current month's water consumption in m³."""
 
@@ -187,31 +159,6 @@ class KaarinaWaterMonthlySensor(BaseWRMWaterSensor):
         if not self.coordinator.data:
             return None
         return self.coordinator.data.get("month_m3")
-
-
-class KaarinaWaterLastHourSensor(BaseWRMWaterSensor):
-    """Last reported hour's water consumption in liters."""
-
-    _attr_translation_key = "last_hour_liters"
-    _attr_device_class = SensorDeviceClass.WATER
-    _attr_native_unit_of_measurement = UnitOfVolume.LITERS
-    _attr_icon = "mdi:clock-outline"
-
-    def __init__(
-        self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
-    ) -> None:
-        super().__init__(coordinator, entry, "last_hour_liters")
-        if self.clean_subdomain == "kaarinanvesihuolto":
-            self.entity_id = "sensor.kaarina_water_last_hour_liters"
-        else:
-            self.entity_id = f"sensor.{self.clean_subdomain}_last_hour_liters"
-
-    @property
-    def native_value(self) -> float | None:
-        """Return the last reported hour's water consumption in liters."""
-        if not self.coordinator.data:
-            return None
-        return self.coordinator.data.get("last_hour_liters")
 
 
 class KaarinaWaterLastReportedSensor(BaseWRMWaterSensor):

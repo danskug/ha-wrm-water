@@ -51,14 +51,8 @@
       "yesterday_liters": {
         "name": "Igår"
       },
-      "today_liters": {
-        "name": "Idag"
-      },
       "monthly_consumption": {
         "name": "Månad"
-      },
-      "last_hour_liters": {
-        "name": "Senaste timmen"
       },
       "last_reported": {
         "name": "Senast uppdaterad"

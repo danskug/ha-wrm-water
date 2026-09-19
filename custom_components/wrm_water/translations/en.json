@@ -51,14 +51,8 @@
       "yesterday_liters": {
         "name": "Yesterday"
       },
-      "today_liters": {
-        "name": "Today"
-      },
       "monthly_consumption": {
         "name": "Monthly Consumption"
-      },
-      "last_hour_liters": {
-        "name": "Last Hour"
       },
       "last_reported": {
         "name": "Last Reported"

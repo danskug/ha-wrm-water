@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "WRM Systems Vesi",
+        "description": "Määritä yhteys WRM Systems -etäluettavaan vesimittariin (esim. Kaarinan Vesihuolto).",
+        "data": {
+          "customer_id": "Maksajan numero (login-input-a)",
+          "meter_serial": "Vesimittarin sarjanumero (login-input-b)",
+          "subdomain": "Portaalin aliverkkotunnus (esim. kaarinanvesihuolto)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Yhdistäminen WRM Systems -portaaliin epäonnistui. Tarkista verkkoyhteys ja portaalin tila.",
+      "invalid_auth": "Tunnistautuminen epäonnistui. Tarkista maksajan numero ja mittarin sarjanumero.",
+      "no_readings": "Yhteys muodostettiin onnistuneesti, mutta yhtään mittauslukemaa ei palautettu."
+    },
+    "abort": {
+      "already_configured": "Tämä vesimittari on jo määritetty Home Assistantiin."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "meter_reading": {
+        "name": "Vesimittari"
+      },
+      "yesterday_liters": {
+        "name": "Eilinen"
+      },
+      "today_liters": {
+        "name": "Tänään"
+      },
+      "monthly_consumption": {
+        "name": "Kuukausi"
+      },
+      "last_hour_liters": {
+        "name": "Viimeisin tunti"
+      }
+    }
+  }
+}

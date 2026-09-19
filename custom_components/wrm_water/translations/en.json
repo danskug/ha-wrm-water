@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "WRM Systems Water",
+        "description": "Configure connection to your WRM Systems smart water meter (e.g. Kaarinan Vesihuolto).",
+        "data": {
+          "customer_id": "Customer / Payer Number (Maksajan numero)",
+          "meter_serial": "Meter Serial Number (Mittarin sarjanumero)",
+          "subdomain": "Portal Subdomain (e.g. kaarinanvesihuolto)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to WRM Systems portal. Check internet connection and portal status.",
+      "invalid_auth": "Authentication failed. Check customer number and meter serial.",
+      "no_readings": "Connected successfully, but no water meter readings were returned."
+    },
+    "abort": {
+      "already_configured": "This water meter is already configured in Home Assistant."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "meter_reading": {
+        "name": "Water Meter Reading"
+      },
+      "yesterday_liters": {
+        "name": "Yesterday"
+      },
+      "today_liters": {
+        "name": "Today"
+      },
+      "monthly_consumption": {
+        "name": "Monthly Consumption"
+      },
+      "last_hour_liters": {
+        "name": "Last Hour"
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "WRM Systems Vatten",
+        "description": "Konfigurera anslutningen till din WRM Systems fjärravlästa vattenmätare (t.ex. Kaarinan Vesihuolto).",
+        "data": {
+          "customer_id": "Kund- / Betalarnummer (login-input-a)",
+          "meter_serial": "Vattenmätarens serienummer (login-input-b)",
+          "subdomain": "Portalens underdomän (t.ex. kaarinanvesihuolto)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Det gick inte att ansluta till WRM Systems webbportal. Kontrollera nätverksanslutningen.",
+      "invalid_auth": "Autentiseringen misslyckades. Kontrollera kundnummer och mätarserienummer.",
+      "no_readings": "Anslutningen lyckades, men inga mätaravläsningar returnerades."
+    },
+    "abort": {
+      "already_configured": "Denna vattenmätare är redan konfigurerad i Home Assistant."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "meter_reading": {
+        "name": "Vattenmätare"
+      },
+      "yesterday_liters": {
+        "name": "Igår"
+      },
+      "today_liters": {
+        "name": "Idag"
+      },
+      "monthly_consumption": {
+        "name": "Månad"
+      },
+      "last_hour_liters": {
+        "name": "Senaste timmen"
+      }
+    }
+  }
+}

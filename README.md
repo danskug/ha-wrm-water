@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="images/logo.png" alt="WRM Systems" width="420">
+</p>
+
 # WRM Systems Water for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/default)
@@ -20,8 +24,8 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
   - `sensor.kaarina_water_last_hour_liters`: Consumption in the last reported hour (L).
 - 🔒 **Zero External Dependencies**:
   Built using Python standard library tools (`html.parser`, `urllib`, `http.cookiejar`) with automatic CSRF token handling and session re-authentication.
-- 🇫🇮 **Full Localization**:
-  Complete English and Finnish translations (`en.json`, `fi.json`) for UI dialogs and entity names.
+- 🌐 **Full Localization**:
+  Complete English, Finnish, and Swedish translations (`en.json`, `fi.json`, `sv.json`) for UI dialogs and entity names.
 
 ---
 

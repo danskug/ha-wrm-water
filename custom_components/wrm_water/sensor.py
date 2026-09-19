@@ -57,11 +57,19 @@ class BaseWRMWaterSensor(CoordinatorEntity[WRMWaterDataUpdateCoordinator], Senso
         self._key = key
         meter_serial = entry.data[CONF_METER_SERIAL]
         subdomain = entry.data.get(CONF_SUBDOMAIN, "kaarinanvesihuolto")
+        clean_subdomain = subdomain.lower().replace("-", "_").replace(".", "_")
+        self.clean_subdomain = clean_subdomain
+
+        if clean_subdomain == "kaarinanvesihuolto":
+            device_name = f"Kaarinan Vesi ({meter_serial})"
+        else:
+            friendly_sub = subdomain.replace("-", " ").replace("_", " ").title()
+            device_name = f"{friendly_sub} ({meter_serial})"
 
         self._attr_unique_id = f"{DOMAIN}_{meter_serial}_{key}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, meter_serial)},
-            name=f"Kaarinan Vesi ({meter_serial})",
+            name=device_name,
             manufacturer="Axioma",
             model="Qalcosonic W1",
             configuration_url=f"https://wmd.wrm-systems.fi/{subdomain}",
@@ -80,8 +88,10 @@ class KaarinaWaterMeterReadingSensor(BaseWRMWaterSensor):
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
     ) -> None:
         super().__init__(coordinator, entry, "meter_reading")
-        # Ensure default entity_id is sensor.kaarina_water_meter_reading for seamless compatibility
-        self.entity_id = "sensor.kaarina_water_meter_reading"
+        if self.clean_subdomain == "kaarinanvesihuolto":
+            self.entity_id = "sensor.kaarina_water_meter_reading"
+        else:
+            self.entity_id = f"sensor.{self.clean_subdomain}_water_meter_reading"
 
     @property
     def native_value(self) -> float | None:
@@ -114,7 +124,10 @@ class KaarinaWaterYesterdaySensor(BaseWRMWaterSensor):
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
     ) -> None:
         super().__init__(coordinator, entry, "yesterday_liters")
-        self.entity_id = "sensor.kaarina_water_yesterday_liters"
+        if self.clean_subdomain == "kaarinanvesihuolto":
+            self.entity_id = "sensor.kaarina_water_yesterday_liters"
+        else:
+            self.entity_id = f"sensor.{self.clean_subdomain}_yesterday_liters"
 
     @property
     def native_value(self) -> float | None:
@@ -137,7 +150,10 @@ class KaarinaWaterTodaySensor(BaseWRMWaterSensor):
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
     ) -> None:
         super().__init__(coordinator, entry, "today_liters")
-        self.entity_id = "sensor.kaarina_water_daily_liters"
+        if self.clean_subdomain == "kaarinanvesihuolto":
+            self.entity_id = "sensor.kaarina_water_daily_liters"
+        else:
+            self.entity_id = f"sensor.{self.clean_subdomain}_daily_liters"
 
     @property
     def native_value(self) -> float | None:
@@ -160,7 +176,10 @@ class KaarinaWaterMonthlySensor(BaseWRMWaterSensor):
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
     ) -> None:
         super().__init__(coordinator, entry, "monthly_consumption")
-        self.entity_id = "sensor.kaarina_water_monthly"
+        if self.clean_subdomain == "kaarinanvesihuolto":
+            self.entity_id = "sensor.kaarina_water_monthly"
+        else:
+            self.entity_id = f"sensor.{self.clean_subdomain}_monthly"
 
     @property
     def native_value(self) -> float | None:
@@ -182,7 +201,10 @@ class KaarinaWaterLastHourSensor(BaseWRMWaterSensor):
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
     ) -> None:
         super().__init__(coordinator, entry, "last_hour_liters")
-        self.entity_id = "sensor.kaarina_water_last_hour_liters"
+        if self.clean_subdomain == "kaarinanvesihuolto":
+            self.entity_id = "sensor.kaarina_water_last_hour_liters"
+        else:
+            self.entity_id = f"sensor.{self.clean_subdomain}_last_hour_liters"
 
     @property
     def native_value(self) -> float | None:
@@ -203,7 +225,10 @@ class KaarinaWaterLastReportedSensor(BaseWRMWaterSensor):
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
     ) -> None:
         super().__init__(coordinator, entry, "last_reported")
-        self.entity_id = "sensor.kaarina_water_last_reported"
+        if self.clean_subdomain == "kaarinanvesihuolto":
+            self.entity_id = "sensor.kaarina_water_last_reported"
+        else:
+            self.entity_id = f"sensor.{self.clean_subdomain}_last_reported"
 
     @property
     def native_value(self) -> datetime.datetime | None:

@@ -86,8 +86,14 @@ class WRMWaterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
 
             if not errors:
+                if subdomain == "kaarinanvesihuolto":
+                    entry_title = f"Kaarinan Vesi ({meter_serial})"
+                else:
+                    friendly_sub = subdomain.replace("-", " ").replace("_", " ").title()
+                    entry_title = f"{friendly_sub} ({meter_serial})"
+
                 return self.async_create_entry(
-                    title=f"Kaarinan Vesi ({meter_serial})",
+                    title=entry_title,
                     data={
                         CONF_CUSTOMER_ID: customer_id,
                         CONF_METER_SERIAL: meter_serial,

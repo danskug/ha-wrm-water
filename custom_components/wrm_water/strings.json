@@ -7,7 +7,7 @@
         "data": {
           "customer_id": "Customer / Payer Number (Maksajan numero)",
           "meter_serial": "Meter Serial Number (Mittarin sarjanumero)",
-          "subdomain": "Portal Subdomain (e.g. kaarinanvesihuolto)",
+          "subdomain": "Portal Subdomain (e.g. kaarinanvesihuolto, sastamalanvesi)",
           "history_days": "History to Import"
         }
       }

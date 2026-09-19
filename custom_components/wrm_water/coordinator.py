@@ -155,9 +155,13 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         subdomain = entry.data.get(CONF_SUBDOMAIN, "kaarinanvesihuolto")
         customer_id = entry.data[CONF_CUSTOMER_ID]
         meter_serial = entry.data[CONF_METER_SERIAL]
-        self.statistic_id = entry.data.get(
-            CONF_STATISTIC_ID, "sensor.kaarina_water_meter_reading"
-        )
+        clean_subdomain = subdomain.lower().replace("-", "_").replace(".", "_")
+        if clean_subdomain == "kaarinanvesihuolto":
+            default_stat_id = "sensor.kaarina_water_meter_reading"
+        else:
+            default_stat_id = f"sensor.{clean_subdomain}_water_meter_reading"
+        self.statistic_id = entry.data.get(CONF_STATISTIC_ID, default_stat_id)
+        self._initial_import_done = False
 
         self.client = WRMClient(subdomain, customer_id, meter_serial)
 
@@ -170,30 +174,37 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from WRM Systems and inject hourly statistics into recorder."""
-        history_days = str(
-            self.entry.options.get(
-                CONF_HISTORY_DAYS,
-                self.entry.data.get(CONF_HISTORY_DAYS, DEFAULT_HISTORY_DAYS),
-            )
-        )
-
         now_utc = datetime.datetime.now(datetime.timezone.utc)
-        if history_days == "all":
-            start_date = "2022-01-01"
-        elif history_days == "365":
-            start_date = (now_utc - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
-        elif history_days == "90":
-            start_date = (now_utc - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
-        elif history_days == "30":
-            start_date = (now_utc - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+        if not self._initial_import_done:
+            history_days = str(
+                self.entry.options.get(
+                    CONF_HISTORY_DAYS,
+                    self.entry.data.get(CONF_HISTORY_DAYS, DEFAULT_HISTORY_DAYS),
+                )
+            )
+            if history_days == "all":
+                start_date = "2010-01-01"
+            elif history_days == "365":
+                start_date = (now_utc - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
+            elif history_days == "90":
+                start_date = (now_utc - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
+            elif history_days == "30":
+                start_date = (now_utc - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+            else:
+                start_date = (now_utc - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+            self._initial_import_done = True
+            _LOGGER.info(
+                "Initial historical import: fetching readings from %s (mode: %s)",
+                start_date,
+                history_days,
+            )
         else:
+            # Routine periodic poll: rolling 7 days is plenty to catch any delayed readings
             start_date = (now_utc - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
-
-        _LOGGER.debug(
-            "Fetching WRM Systems readings from %s (history mode: %s)",
-            start_date,
-            history_days,
-        )
+            _LOGGER.debug(
+                "Routine periodic poll: fetching rolling 7-day readings from %s",
+                start_date,
+            )
 
         try:
             raw_data = await self.hass.async_add_executor_job(

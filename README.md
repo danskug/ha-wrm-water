@@ -6,8 +6,9 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/default)
 [![GitHub release](https://img.shields.io/github/v/release/danskug/ha-wrm-water)](https://github.com/danskug/ha-wrm-water/releases)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=danskug&repository=ha-wrm-water&category=integration)
 
-Home Assistant integration for remote-read smart water meters connected to **WRM Systems** (`wmd.wrm-systems.fi`), such as **Kaarinan Vesihuolto** and other Finnish water utilities using Axioma Qalcosonic W1 ultrasonic meters.
+Home Assistant integration for remote-read smart water meters connected to **WRM Systems** (`wmd.wrm-systems.fi`), including **Kaarinan Vesihuolto** and numerous Finnish municipal water utilities and cooperatives using Axioma Qalcosonic W1 ultrasonic meters.
 
 ---
 
@@ -16,12 +17,15 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
 - 💧 **Automated Hourly Long-Term Statistics (LTS)**:
   Water utilities report data in daily batches. Unlike standard scrapers that dump the entire day's consumption as a single clump when polled, this integration automatically backfills every single past hour (`async_import_statistics`) to its exact historical timestamp.
 - ⚡ **Seamless Energy Dashboard Integration**:
-  The main water meter reading (`sensor.kaarina_water_meter_reading` or configured entity) plugs directly into Home Assistant's official Energy Dashboard (`m³`).
+  The main water meter reading (`m³`) plugs directly into Home Assistant's official Energy Dashboard.
 - 📊 **Dedicated Daily & Monthly Sensors**:
-  - `sensor.kaarina_water_yesterday_liters`: Total consumption yesterday (L) — perfect for wall tablets and dashboard cards (*"Eilen: 337 L"*).
-  - `sensor.kaarina_water_daily_liters`: Today's preliminary consumption (L).
-  - `sensor.kaarina_water_monthly`: Current month's consumption ($m^3$).
-  - `sensor.kaarina_water_last_hour_liters`: Consumption in the last reported hour (L).
+  - Yesterday's total consumption in liters (L) — perfect for wall tablets and dashboard cards (*"Eilen: 337 L"*).
+  - Today's preliminary consumption (L).
+  - Current month's consumption ($m^3$).
+  - Consumption in the last reported hour (L).
+  - Timestamp when the water meter last transmitted data.
+- 🕒 **Smart History Backfill & Lightweight Periodic Polling**:
+  Choose how much history to import on setup or in Options Flow (7 days, 30 days, 90 days, 1 year, or All history since meter installation). Routine 4-hour polling only fetches a rolling 7-day window to minimize network traffic and portal load.
 - 🔒 **Zero External Dependencies**:
   Built using Python standard library tools (`html.parser`, `urllib`, `http.cookiejar`) with automatic CSRF token handling and session re-authentication.
 - 🌐 **Full Localization**:
@@ -31,7 +35,13 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
 
 ## Installation via HACS
 
-1. Make sure [HACS](https://hacs.xyz/) is installed in your Home Assistant instance.
+### 1-Click Install
+Click the button below to add this repository directly to your Home Assistant instance:
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=danskug&repository=ha-wrm-water&category=integration)
+
+### Manual HACS Install
+1. Make sure [HACS](https://hacs.xyz/) is installed.
 2. In Home Assistant, open **HACS**.
 3. Click the three dots (top right) $\rightarrow$ **Custom repositories**.
 4. Add repository URL:
@@ -51,8 +61,30 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
 3. Enter your portal credentials:
    - **Customer / Payer Number (Maksajan numero)**: Found on your water bill (e.g. `12345`).
    - **Meter Serial Number (Mittarin sarjanumero)**: Printed on your Axioma water meter (e.g. `01234567`).
-   - **Portal Subdomain**: Your utility's subdomain on `wmd.wrm-systems.fi` (default: `kaarinanvesihuolto`).
+   - **Portal Subdomain**: The identifier in your utility's portal URL `https://wmd.wrm-systems.fi/<subdomain>` (default: `kaarinanvesihuolto`).
+   - **History to Import**: Choose how far back in time to import hourly history into Home Assistant.
 4. Click **Submit**.
+
+---
+
+## Supported Water Utilities & Subdomains
+
+Any water utility using the WRM Systems platform (`wmd.wrm-systems.fi`) is supported. To find your subdomain, open your water utility's consumption portal login page in your browser — the subdomain is the part of the web address immediately following `wmd.wrm-systems.fi/`.
+
+| Subdomain | Water Utility / Municipality | Portal URL |
+| :--- | :--- | :--- |
+| `kaarinanvesihuolto` *(Default)* | Kaarinan Vesihuolto | `https://wmd.wrm-systems.fi/kaarinanvesihuolto` |
+| `sastamalanvesi` | Sastamalan Vesi | `https://wmd.wrm-systems.fi/sastamalanvesi` |
+| `kangasalan-vesi` | Kangasalan Vesi | `https://wmd.wrm-systems.fi/kangasalan-vesi` |
+| `orimattilan-vesi` | Orimattilan Vesi | `https://wmd.wrm-systems.fi/orimattilan-vesi` |
+| `suonenjoenvesi` | Suonenjoen Vesi Oy | `https://wmd.wrm-systems.fi/suonenjoenvesi` |
+| `vaalanvesijalampo` | Vaalan Vesi ja Lämpö Oy | `https://wmd.wrm-systems.fi/vaalanvesijalampo` |
+| `leppavirran-vesihuoltolaitos` | Leppävirran vesihuoltolaitos | `https://wmd.wrm-systems.fi/leppavirran-vesihuoltolaitos` |
+| `keski-savon-vesi` | Keski-Savon Vesi | `https://wmd.wrm-systems.fi/keski-savon-vesi` |
+| `lumijoen-vesi-oy` | Lumijoen Vesi Oy | `https://wmd.wrm-systems.fi/lumijoen-vesi-oy` |
+| `pyha-luosto-vesi-oy` | Pyhä-Luosto Vesi Oy | `https://wmd.wrm-systems.fi/pyha-luosto-vesi-oy` |
+| `etela-pornaisten-vesiosuuskunta` | Etelä-Pornaisten Vesiosuuskunta | `https://wmd.wrm-systems.fi/etela-pornaisten-vesiosuuskunta` |
+| `etela-elamaen-vok` | Etelä-Elimäen VOK | `https://wmd.wrm-systems.fi/etela-elamaen-vok` |
 
 ---
 

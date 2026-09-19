@@ -69,22 +69,29 @@ Click the button below to add this repository directly to your Home Assistant in
 
 ## Supported Water Utilities & Subdomains
 
-Any water utility using the WRM Systems platform (`wmd.wrm-systems.fi`) is supported. To find your subdomain, open your water utility's consumption portal login page in your browser — the subdomain is the part of the web address immediately following `wmd.wrm-systems.fi/`.
+Any water utility using the WRM Systems platform (`wmd.wrm-systems.fi`) is supported. Subdomains on WRM Systems are all lowercase and do not contain hyphens or spaces. To find your subdomain, open your water utility's consumption portal login page in your browser — the subdomain is the part of the web address immediately following `wmd.wrm-systems.fi/`.
+
+The following 17 water utilities have been directly tested and verified:
 
 | Subdomain | Water Utility / Municipality | Portal URL |
 | :--- | :--- | :--- |
 | `kaarinanvesihuolto` *(Default)* | Kaarinan Vesihuolto | `https://wmd.wrm-systems.fi/kaarinanvesihuolto` |
-| `sastamalanvesi` | Sastamalan Vesi | `https://wmd.wrm-systems.fi/sastamalanvesi` |
-| `kangasalan-vesi` | Kangasalan Vesi | `https://wmd.wrm-systems.fi/kangasalan-vesi` |
-| `orimattilan-vesi` | Orimattilan Vesi | `https://wmd.wrm-systems.fi/orimattilan-vesi` |
-| `suonenjoenvesi` | Suonenjoen Vesi Oy | `https://wmd.wrm-systems.fi/suonenjoenvesi` |
-| `vaalanvesijalampo` | Vaalan Vesi ja Lämpö Oy | `https://wmd.wrm-systems.fi/vaalanvesijalampo` |
-| `leppavirran-vesihuoltolaitos` | Leppävirran vesihuoltolaitos | `https://wmd.wrm-systems.fi/leppavirran-vesihuoltolaitos` |
-| `keski-savon-vesi` | Keski-Savon Vesi | `https://wmd.wrm-systems.fi/keski-savon-vesi` |
-| `lumijoen-vesi-oy` | Lumijoen Vesi Oy | `https://wmd.wrm-systems.fi/lumijoen-vesi-oy` |
-| `pyha-luosto-vesi-oy` | Pyhä-Luosto Vesi Oy | `https://wmd.wrm-systems.fi/pyha-luosto-vesi-oy` |
-| `etela-pornaisten-vesiosuuskunta` | Etelä-Pornaisten Vesiosuuskunta | `https://wmd.wrm-systems.fi/etela-pornaisten-vesiosuuskunta` |
-| `etela-elamaen-vok` | Etelä-Elimäen VOK | `https://wmd.wrm-systems.fi/etela-elamaen-vok` |
+| `oulunvesi` | Oulun Vesi | `https://wmd.wrm-systems.fi/oulunvesi` |
+| `salonvesi` | Salon Vesi -liikelaitos | `https://wmd.wrm-systems.fi/salonvesi` |
+| `seinajoenvesi` | Seinäjoen Vesi | `https://wmd.wrm-systems.fi/seinajoenvesi` |
+| `kajaaninvesi` | Kajaanin Vesi | `https://wmd.wrm-systems.fi/kajaaninvesi` |
+| `kirkkonummenvesi` | Kirkkonummen Vesi | `https://wmd.wrm-systems.fi/kirkkonummenvesi` |
+| `kangasalanvesi` | Kangasalan Vesi | `https://wmd.wrm-systems.fi/kangasalanvesi` |
+| `sastamalanvesi` | Sastamalan Vesi Liikelaitos | `https://wmd.wrm-systems.fi/sastamalanvesi` |
+| `ylojarvenvesi` | Ylöjärven Vesi | `https://wmd.wrm-systems.fi/ylojarvenvesi` |
+| `vihdinvesi` | Vihdin Vesi | `https://wmd.wrm-systems.fi/vihdinvesi` |
+| `orimattilanvesi` | Orimattilan Vesi | `https://wmd.wrm-systems.fi/orimattilanvesi` |
+| `loimaanvesi` | Loimaan Vesi | `https://wmd.wrm-systems.fi/loimaanvesi` |
+| `suonenjoenvesi` | Suonenjoen Vesi | `https://wmd.wrm-systems.fi/suonenjoenvesi` |
+| `vaalanvesijalampo` | Vaalan Vesi ja Lämpö | `https://wmd.wrm-systems.fi/vaalanvesijalampo` |
+| `keskisavonvesi` | Keski-Savon Vesi | `https://wmd.wrm-systems.fi/keskisavonvesi` |
+| `lumijoenvesi` | Lumijoen Vesi Oy | `https://wmd.wrm-systems.fi/lumijoenvesi` |
+| `pyhaluostovesi` | Pyhä-Luosto Vesi Oy | `https://wmd.wrm-systems.fi/pyhaluostovesi` |
 
 ---
 

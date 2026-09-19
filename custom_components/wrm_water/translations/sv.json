@@ -7,7 +7,8 @@
         "data": {
           "customer_id": "Kund- / Betalarnummer (login-input-a)",
           "meter_serial": "Vattenmätarens serienummer (login-input-b)",
-          "subdomain": "Portalens underdomän (t.ex. kaarinanvesihuolto)"
+          "subdomain": "Portalens underdomän (t.ex. kaarinanvesihuolto)",
+          "history_days": "Historik att importera"
         }
       }
     },
@@ -18,6 +19,28 @@
     },
     "abort": {
       "already_configured": "Denna vattenmätare är redan konfigurerad i Home Assistant."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Konfigurera WRM Systems Vatten",
+        "description": "Välj hur långt bakåt du vill importera timvis historisk vattenförbrukning till Home Assistant.",
+        "data": {
+          "history_days": "Historik att importera"
+        }
+      }
+    }
+  },
+  "selector": {
+    "history_days": {
+      "options": {
+        "7": "7 dagar (Senaste veckan)",
+        "30": "30 dagar (Senaste månaden)",
+        "90": "90 dagar (Senaste 3 månaderna)",
+        "365": "1 år (Senaste året)",
+        "all": "All historik (Sedan installation / 2022)"
+      }
     }
   },
   "entity": {

@@ -25,9 +25,11 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from .const import (
     BASE_URL,
     CONF_CUSTOMER_ID,
+    CONF_HISTORY_DAYS,
     CONF_METER_SERIAL,
     CONF_STATISTIC_ID,
     CONF_SUBDOMAIN,
+    DEFAULT_HISTORY_DAYS,
     DEFAULT_SCAN_INTERVAL_HOURS,
     DOMAIN,
 )
@@ -168,10 +170,30 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from WRM Systems and inject hourly statistics into recorder."""
-        # Fetch data for the last 7 days
-        start_date = (
-            datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
-        ).strftime("%Y-%m-%d")
+        history_days = str(
+            self.entry.options.get(
+                CONF_HISTORY_DAYS,
+                self.entry.data.get(CONF_HISTORY_DAYS, DEFAULT_HISTORY_DAYS),
+            )
+        )
+
+        now_utc = datetime.datetime.now(datetime.timezone.utc)
+        if history_days == "all":
+            start_date = "2022-01-01"
+        elif history_days == "365":
+            start_date = (now_utc - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
+        elif history_days == "90":
+            start_date = (now_utc - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
+        elif history_days == "30":
+            start_date = (now_utc - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+        else:
+            start_date = (now_utc - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+
+        _LOGGER.debug(
+            "Fetching WRM Systems readings from %s (history mode: %s)",
+            start_date,
+            history_days,
+        )
 
         try:
             raw_data = await self.hass.async_add_executor_job(
@@ -264,17 +286,21 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 statistic_id=self.statistic_id,
                 unit_of_measurement=UnitOfVolume.CUBIC_METERS,
             )
+            metadata["unit_class"] = "volume"
             _LOGGER.debug(
                 "Importing %d hourly water statistics into LTS for %s",
                 len(stats),
                 self.statistic_id,
             )
             recorder = get_instance(self.hass)
-            try:
-                if Statistics is not None:
-                    recorder.async_import_statistics(metadata, stats, Statistics)
-                else:
-                    recorder.async_import_statistics(metadata, stats)
-            except TypeError as err:
-                _LOGGER.debug("Falling back to 2-arg async_import_statistics: %s", err)
-                recorder.async_import_statistics(metadata, stats)
+            chunk_size = 500
+            for i in range(0, len(stats), chunk_size):
+                chunk = stats[i : i + chunk_size]
+                try:
+                    if Statistics is not None:
+                        recorder.async_import_statistics(metadata, chunk, Statistics)
+                    else:
+                        recorder.async_import_statistics(metadata, chunk)
+                except TypeError as err:
+                    _LOGGER.debug("Falling back to 2-arg async_import_statistics: %s", err)
+                    recorder.async_import_statistics(metadata, chunk)

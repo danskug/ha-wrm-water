@@ -7,7 +7,8 @@
         "data": {
           "customer_id": "Customer / Payer Number (Maksajan numero)",
           "meter_serial": "Meter Serial Number (Mittarin sarjanumero)",
-          "subdomain": "Portal Subdomain (e.g. kaarinanvesihuolto)"
+          "subdomain": "Portal Subdomain (e.g. kaarinanvesihuolto)",
+          "history_days": "History to Import"
         }
       }
     },
@@ -18,6 +19,28 @@
     },
     "abort": {
       "already_configured": "This water meter is already configured in Home Assistant."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure WRM Systems Water",
+        "description": "Select how far back to import historical hourly water consumption into Home Assistant.",
+        "data": {
+          "history_days": "History to Import"
+        }
+      }
+    }
+  },
+  "selector": {
+    "history_days": {
+      "options": {
+        "7": "7 days (Past week)",
+        "30": "30 days (Past month)",
+        "90": "90 days (Past 3 months)",
+        "365": "1 year (Past year)",
+        "all": "All history (Since installation / 2022)"
+      }
     }
   },
   "entity": {

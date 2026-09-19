@@ -7,7 +7,8 @@
         "data": {
           "customer_id": "Maksajan numero (login-input-a)",
           "meter_serial": "Vesimittarin sarjanumero (login-input-b)",
-          "subdomain": "Portaalin aliverkkotunnus (esim. kaarinanvesihuolto)"
+          "subdomain": "Portaalin aliverkkotunnus (esim. kaarinanvesihuolto)",
+          "history_days": "Tuotava historia"
         }
       }
     },
@@ -18,6 +19,28 @@
     },
     "abort": {
       "already_configured": "Tämä vesimittari on jo määritetty Home Assistantiin."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "WRM Systems Vesi -asetukset",
+        "description": "Valitse kuinka pitkältä ajalta tuntikohtainen vedenkulutushistoria tuodaan Home Assistantiin.",
+        "data": {
+          "history_days": "Tuotava historia"
+        }
+      }
+    }
+  },
+  "selector": {
+    "history_days": {
+      "options": {
+        "7": "7 päivää (Viime viikko)",
+        "30": "30 päivää (Viime kuukausi)",
+        "90": "90 päivää (Viimeiset 3 kk)",
+        "365": "1 vuosi (Viime vuosi)",
+        "all": "Koko historia (Mittarin asennuksesta / 2022 alkaen)"
+      }
     }
   },
   "entity": {

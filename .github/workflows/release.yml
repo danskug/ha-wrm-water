@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "Processing release for tag: $TAG"
+          
+          PRERELEASE_FLAG=""
+          if [[ "$TAG" == *"alpha"* || "$TAG" == *"beta"* || "$TAG" == *"rc"* ]]; then
+            PRERELEASE_FLAG="--prerelease"
+            echo "Marking as pre-release"
+          fi
+          
+          gh release create "$TAG" \
+            $PRERELEASE_FLAG \
+            --title "$TAG" \
+            --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -12,6 +12,10 @@ import urllib.parse
 import urllib.request
 
 from homeassistant.components.recorder import get_instance
+try:
+    from homeassistant.components.recorder.db_schema import Statistics
+except ImportError:
+    Statistics = None
 from homeassistant.components.recorder.models import StatisticData, StatisticMetaData
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfVolume
@@ -215,7 +219,10 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         month_m3 = round(month_liters / 1000.0, 3)
 
         # 2. Automatically import hourly statistics into Home Assistant LTS
-        await self._async_import_lts_statistics(chronological_data)
+        try:
+            await self._async_import_lts_statistics(chronological_data)
+        except Exception as err:
+            _LOGGER.error("Failed to import hourly LTS statistics: %s", err, exc_info=True)
 
         return {
             "current_reading_m3": current_reading_m3,
@@ -262,4 +269,12 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 len(stats),
                 self.statistic_id,
             )
-            get_instance(self.hass).async_import_statistics(metadata, stats)
+            recorder = get_instance(self.hass)
+            try:
+                if Statistics is not None:
+                    recorder.async_import_statistics(metadata, stats, Statistics)
+                else:
+                    recorder.async_import_statistics(metadata, stats)
+            except TypeError as err:
+                _LOGGER.debug("Falling back to 2-arg async_import_statistics: %s", err)
+                recorder.async_import_statistics(metadata, stats)

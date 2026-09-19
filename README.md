@@ -116,6 +116,15 @@ The following 17 water utilities are verified and available directly in the setu
 
 ---
 
+## Disclaimer & Support
+
+> [!NOTE]
+> - 🤖 **AI-Assisted Development**: This integration was developed with AI assistance and functions well for the author's private use.
+> - 🤝 **Shared As-Is**: The code is shared openly so that others can benefit from the work done so far or fork and build upon it independently.
+> - 🛠️ **No Active Support**: The author does not provide active user support or implement feature requests unless they provide significant direct value to the author's own setup. Community pull requests and forks are always welcome!
+
+---
+
 ## License
 
 MIT License

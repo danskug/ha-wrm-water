@@ -260,20 +260,44 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def _async_import_lts_statistics(self, chronological_data: list[list[Any]]) -> None:
         """Import hourly readings into Home Assistant Long-Term Statistics."""
         stats: list[StatisticData] = []
+        prev_dt: datetime.datetime | None = None
+        prev_cum: float | None = None
+
         for row in chronological_data:
             try:
                 _, cum_m3, _, epoch_s = row
                 dt_utc = datetime.datetime.fromtimestamp(
                     int(epoch_s), tz=datetime.timezone.utc
                 ).replace(minute=0, second=0, microsecond=0)
+                cum_float = round(float(cum_m3), 3)
+
+                # Ensure cumulative reading is monotonically non-decreasing
+                if prev_cum is not None and cum_float < prev_cum:
+                    cum_float = prev_cum
+
+                # Fill any hourly gaps to overwrite legacy recorder artifacts and ensure continuity
+                if prev_dt is not None and prev_cum is not None:
+                    gap_hours = int((dt_utc - prev_dt).total_seconds() // 3600)
+                    if 1 < gap_hours <= 48:
+                        for step in range(1, gap_hours):
+                            fill_dt = prev_dt + datetime.timedelta(hours=step)
+                            stats.append(
+                                StatisticData(
+                                    start=fill_dt,
+                                    state=prev_cum,
+                                    sum=prev_cum,
+                                )
+                            )
 
                 stats.append(
                     StatisticData(
                         start=dt_utc,
-                        state=round(float(cum_m3), 3),
-                        sum=round(float(cum_m3), 3),
+                        state=cum_float,
+                        sum=cum_float,
                     )
                 )
+                prev_dt = dt_utc
+                prev_cum = cum_float
             except Exception as e:
                 _LOGGER.warning("Skipping malformed row for LTS: %s (%s)", row, e)
 

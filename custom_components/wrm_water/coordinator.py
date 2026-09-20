@@ -284,21 +284,6 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             except Exception as e:
                 _LOGGER.warning("Skipping malformed row for LTS: %s (%s)", row, e)
 
-        # Also fill from latest reading up to current hour so HA recorder doesn't create an unaligned sum
-        now_hour = datetime.datetime.now(datetime.timezone.utc).replace(minute=0, second=0, microsecond=0)
-        if prev_dt is not None and prev_cum is not None and prev_dt < now_hour:
-            gap_hours = int((now_hour - prev_dt).total_seconds() // 3600)
-            if 0 < gap_hours <= 48:
-                for step in range(1, gap_hours + 1):
-                    fill_dt = prev_dt + datetime.timedelta(hours=step)
-                    stats.append(
-                        StatisticData(
-                            start=fill_dt,
-                            state=prev_cum,
-                            sum=prev_cum,
-                        )
-                    )
-
         if stats:
             metadata = StatisticMetaData(
                 has_mean=False,

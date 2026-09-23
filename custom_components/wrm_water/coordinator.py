@@ -12,11 +12,12 @@ import urllib.parse
 import urllib.request
 
 from homeassistant.components.recorder import get_instance
-try:
-    from homeassistant.components.recorder.db_schema import Statistics
-except ImportError:
-    Statistics = None
 from homeassistant.components.recorder.models import StatisticData, StatisticMetaData
+try:
+    from homeassistant.components.recorder.models import StatisticMeanType
+except ImportError:
+    StatisticMeanType = None
+from homeassistant.components.recorder.statistics import async_add_external_statistics
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfVolume
 from homeassistant.core import HomeAssistant
@@ -157,10 +158,12 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         meter_serial = entry.data[CONF_METER_SERIAL]
         clean_subdomain = subdomain.lower().replace("-", "_").replace(".", "_")
         if clean_subdomain == "kaarinanvesihuolto":
-            default_stat_id = "sensor.kaarina_water_meter_reading"
+            default_stat_id = f"{DOMAIN}:kaarina_water_meter_reading"
         else:
-            default_stat_id = f"sensor.{clean_subdomain}_water_meter_reading"
+            default_stat_id = f"{DOMAIN}:{clean_subdomain}_water_meter_reading"
         self.statistic_id = entry.data.get(CONF_STATISTIC_ID, default_stat_id)
+        if not self.statistic_id.startswith(f"{DOMAIN}:"):
+            self.statistic_id = default_stat_id
         self._initial_import_done = False
 
         self.client = WRMClient(subdomain, customer_id, meter_serial)
@@ -289,25 +292,23 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 has_mean=False,
                 has_sum=True,
                 name="Kaarina Water Meter Reading",
-                source="recorder",
+                source=DOMAIN,
                 statistic_id=self.statistic_id,
                 unit_of_measurement=UnitOfVolume.CUBIC_METERS,
             )
             metadata["unit_class"] = "volume"
+            if StatisticMeanType is not None:
+                metadata["mean_type"] = StatisticMeanType.NONE
+
             _LOGGER.debug(
-                "Importing %d hourly water statistics into LTS for %s",
+                "Importing %d hourly external water statistics into LTS for %s",
                 len(stats),
                 self.statistic_id,
             )
-            recorder = get_instance(self.hass)
             chunk_size = 500
             for i in range(0, len(stats), chunk_size):
                 chunk = stats[i : i + chunk_size]
                 try:
-                    if Statistics is not None:
-                        recorder.async_import_statistics(metadata, chunk, Statistics)
-                    else:
-                        recorder.async_import_statistics(metadata, chunk)
-                except TypeError as err:
-                    _LOGGER.debug("Falling back to 2-arg async_import_statistics: %s", err)
-                    recorder.async_import_statistics(metadata, chunk)
+                    async_add_external_statistics(self.hass, metadata, chunk)
+                except Exception as err:
+                    _LOGGER.error("Failed to add external statistics: %s", err)

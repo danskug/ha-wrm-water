@@ -12,12 +12,11 @@ import urllib.parse
 import urllib.request
 
 from homeassistant.components.recorder import get_instance
-from homeassistant.components.recorder.models import StatisticData, StatisticMetaData
 try:
-    from homeassistant.components.recorder.models import StatisticMeanType
+    from homeassistant.components.recorder.db_schema import Statistics
 except ImportError:
-    StatisticMeanType = None
-from homeassistant.components.recorder.statistics import async_add_external_statistics
+    Statistics = None
+from homeassistant.components.recorder.models import StatisticData, StatisticMetaData
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfVolume
 from homeassistant.core import HomeAssistant
@@ -158,11 +157,11 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         meter_serial = entry.data[CONF_METER_SERIAL]
         clean_subdomain = subdomain.lower().replace("-", "_").replace(".", "_")
         if clean_subdomain == "kaarinanvesihuolto":
-            default_stat_id = f"{DOMAIN}:kaarina_water_meter_reading"
+            default_stat_id = "sensor.kaarina_water_meter_reading"
         else:
-            default_stat_id = f"{DOMAIN}:{clean_subdomain}_water_meter_reading"
+            default_stat_id = f"sensor.{clean_subdomain}_water_meter_reading"
         self.statistic_id = entry.data.get(CONF_STATISTIC_ID, default_stat_id)
-        if not self.statistic_id.startswith(f"{DOMAIN}:"):
+        if not self.statistic_id.startswith("sensor."):
             self.statistic_id = default_stat_id
         self._initial_import_done = False
 
@@ -287,28 +286,45 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             except Exception as e:
                 _LOGGER.warning("Skipping malformed row for LTS: %s (%s)", row, e)
 
+        # Align intermediate hours up to current hour to prevent negative dips or recorder desync
+        now_hour = datetime.datetime.now(datetime.timezone.utc).replace(minute=0, second=0, microsecond=0)
+        if prev_dt is not None and prev_cum is not None and prev_dt < now_hour:
+            gap_hours = int((now_hour - prev_dt).total_seconds() // 3600)
+            if 0 < gap_hours <= 48:
+                for step in range(1, gap_hours + 1):
+                    fill_dt = prev_dt + datetime.timedelta(hours=step)
+                    stats.append(
+                        StatisticData(
+                            start=fill_dt,
+                            state=prev_cum,
+                            sum=prev_cum,
+                        )
+                    )
+
         if stats:
             metadata = StatisticMetaData(
                 has_mean=False,
                 has_sum=True,
                 name="Kaarina Water Meter Reading",
-                source=DOMAIN,
+                source="recorder",
                 statistic_id=self.statistic_id,
                 unit_of_measurement=UnitOfVolume.CUBIC_METERS,
             )
             metadata["unit_class"] = "volume"
-            if StatisticMeanType is not None:
-                metadata["mean_type"] = StatisticMeanType.NONE
-
             _LOGGER.debug(
-                "Importing %d hourly external water statistics into LTS for %s",
+                "Importing %d hourly water statistics into LTS for %s",
                 len(stats),
                 self.statistic_id,
             )
+            recorder = get_instance(self.hass)
             chunk_size = 500
             for i in range(0, len(stats), chunk_size):
                 chunk = stats[i : i + chunk_size]
                 try:
-                    async_add_external_statistics(self.hass, metadata, chunk)
-                except Exception as err:
-                    _LOGGER.error("Failed to add external statistics: %s", err)
+                    if Statistics is not None:
+                        recorder.async_import_statistics(metadata, chunk, Statistics)
+                    else:
+                        recorder.async_import_statistics(metadata, chunk)
+                except TypeError as err:
+                    _LOGGER.debug("Falling back to 2-arg async_import_statistics: %s", err)
+                    recorder.async_import_statistics(metadata, chunk)

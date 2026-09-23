@@ -78,9 +78,7 @@ class KaarinaWaterMeterReadingSensor(BaseWRMWaterSensor):
     _attr_translation_key = "meter_reading"
     _attr_device_class = SensorDeviceClass.WATER
     _attr_native_unit_of_measurement = UnitOfVolume.CUBIC_METERS
-    # Explicitly set to None so Home Assistant's recorder does not compile hourly statistics
-    # from live states. Hourly statistics are imported exclusively via verified LTS batches.
-    _attr_state_class = None
+    _attr_state_class = SensorStateClass.TOTAL_INCREASING
 
     def __init__(
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry

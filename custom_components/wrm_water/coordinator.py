@@ -1,6 +1,7 @@
 """DataUpdateCoordinator and API client for WRM Systems Water."""
 from __future__ import annotations
 
+import asyncio
 import datetime
 import http.cookiejar
 from html.parser import HTMLParser
@@ -293,15 +294,19 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         prev_dt: datetime.datetime | None = None
         prev_cum: float | None = None
 
-        # HA Core recorder compiles statistics for (now_hour - 1) shortly after now_hour starts.
-        # To prevent collisions with HA recorder's own compile_statistics job (which throws
-        # sqlite3.IntegrityError: UNIQUE constraint failed: statistics.metadata_id, statistics.start_ts
-        # and rolls back the entire hourly batch for all entities across the house),
-        # only import historical hours that have already been compiled (start < now_hour - 1h).
-        now_hour = datetime.datetime.now(datetime.timezone.utc).replace(
-            minute=0, second=0, microsecond=0
-        )
-        compile_safe_cutoff = now_hour - datetime.timedelta(hours=1)
+        # HA Core recorder compiles statistics for (now_hour - 1h) at XX:00:10.
+        # If we happen to poll during the first 25 seconds of a new hour, wait until
+        # XX:00:25 so HA Core has finished inserting (now_hour - 1h) into `statistics`.
+        # Then every hour with start < now_hour (including now_hour - 1h) is already
+        # compiled in `statistics` and can be safely updated in-place without risking
+        # sqlite3.IntegrityError (UNIQUE constraint failed) or leaving (now_hour - 1h)
+        # with a stale value that would cause a temporary negative bar.
+        now_utc = datetime.datetime.now(datetime.timezone.utc)
+        if now_utc.minute == 0 and now_utc.second < 25:
+            await asyncio.sleep(25 - now_utc.second)
+            now_utc = datetime.datetime.now(datetime.timezone.utc)
+
+        compile_safe_cutoff = now_utc.replace(minute=0, second=0, microsecond=0)
 
         for row in chronological_data:
             try:

@@ -21,11 +21,13 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfVolume
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
 from .const import (
     BASE_URL,
     CONF_CUSTOMER_ID,
     CONF_HISTORY_DAYS,
+    CONF_INITIAL_IMPORT_DONE,
     CONF_METER_SERIAL,
     CONF_STATISTIC_ID,
     CONF_SUBDOMAIN,
@@ -129,6 +131,8 @@ class WRMClient:
 
         resp_post = opener.open(req_post, timeout=20)
         _ = resp_post.read()
+        if "/login" in resp_post.geturl():
+            raise PermissionError("Authentication failed (redirected back to login page)")
 
         # 3. Request hourly readings JSON
         readings_url = f"{BASE_URL}/data/readings?serialNumber={self.meter_serial}&startDate={start_date}"
@@ -163,7 +167,12 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.statistic_id = entry.data.get(CONF_STATISTIC_ID, default_stat_id)
         if not self.statistic_id.startswith("sensor."):
             self.statistic_id = default_stat_id
-        self._initial_import_done = False
+
+        # Persist initial_import_done across HA restarts so "all" history is only fetched once
+        # unless explicitly re-triggered via OptionsFlow.
+        self._initial_import_done: bool = bool(
+            entry.data.get(CONF_INITIAL_IMPORT_DONE, False)
+        )
 
         self.client = WRMClient(subdomain, customer_id, meter_serial)
 
@@ -177,6 +186,8 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from WRM Systems and inject hourly statistics into recorder."""
         now_utc = datetime.datetime.now(datetime.timezone.utc)
+        performed_initial_import = False
+
         if not self._initial_import_done:
             history_days = str(
                 self.entry.options.get(
@@ -195,13 +206,14 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             else:
                 start_date = (now_utc - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
             self._initial_import_done = True
+            performed_initial_import = True
             _LOGGER.info(
                 "Initial historical import: fetching readings from %s (mode: %s)",
                 start_date,
                 history_days,
             )
         else:
-            # Routine periodic poll: rolling 2-day window (48 hours) to catch new readings
+            # Routine periodic poll: rolling 2-day window (48 hours) to catch new 8h batches
             start_date = (now_utc - datetime.timedelta(days=2)).strftime("%Y-%m-%d")
             _LOGGER.debug(
                 "Routine periodic poll: fetching rolling 2-day readings from %s",
@@ -228,17 +240,50 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # Reverse to chronological order (oldest first)
         chronological_data = list(reversed(raw_data))
 
+        # Compute today's, yesterday's, and rolling 24h consumption in liters
+        now_local = dt_util.now()
+        today_date = now_local.date()
+        yesterday_date = today_date - datetime.timedelta(days=1)
+        today_liters = 0.0
+        yesterday_liters = 0.0
+        for row in chronological_data[-72:]:
+            try:
+                hour_m3 = float(row[2])
+                epoch_s = int(row[3])
+                row_local_dt = dt_util.as_local(
+                    datetime.datetime.fromtimestamp(epoch_s, tz=datetime.timezone.utc)
+                )
+                row_date = row_local_dt.date()
+                if row_date == today_date:
+                    today_liters += hour_m3 * 1000.0
+                elif row_date == yesterday_date:
+                    yesterday_liters += hour_m3 * 1000.0
+            except Exception:
+                continue
+
+        last_24h_liters = sum(
+            float(r[2]) * 1000.0 for r in chronological_data[-24:] if len(r) >= 3
+        )
+
         # Automatically import hourly statistics into Home Assistant LTS
         try:
             await self._async_import_lts_statistics(chronological_data)
         except Exception as err:
             _LOGGER.error("Failed to import hourly LTS statistics: %s", err, exc_info=True)
 
+        # Persist initial_import_done=True in entry.data so future HA restarts skip full backfill
+        if performed_initial_import and not self.entry.data.get(CONF_INITIAL_IMPORT_DONE):
+            new_data = {**self.entry.data, CONF_INITIAL_IMPORT_DONE: True}
+            self.hass.config_entries.async_update_entry(self.entry, data=new_data)
+
         return {
             "current_reading_m3": current_reading_m3,
             "last_reported": last_reported,
             "last_timestamp": last_timestamp,
             "last_hour_liters": last_hour_liters,
+            "today_liters": round(today_liters, 1),
+            "yesterday_liters": round(yesterday_liters, 1),
+            "last_24h_liters": round(last_24h_liters, 1),
             "readings": chronological_data,
         }
 
@@ -302,7 +347,7 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             metadata = StatisticMetaData(
                 has_mean=False,
                 has_sum=True,
-                name="Kaarina Water Meter Reading",
+                name=None,
                 source="recorder",
                 statistic_id=self.statistic_id,
                 unit_of_measurement=UnitOfVolume.CUBIC_METERS,

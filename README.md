@@ -15,11 +15,11 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
 ## Key Features
 
 - 💧 **Automated Hourly Long-Term Statistics (LTS)**:
-  Water utilities report data in daily batches. Unlike standard scrapers that dump the entire day's consumption as a single clump when polled, this integration automatically backfills every single past hour (`async_import_statistics`) to its exact historical timestamp.
+  Water utilities report data in periodic batches (typically every 8 hours around 06:00, 14:00, and 22:00). Unlike standard scrapers that dump an entire batch's consumption as a single clump when polled, this integration automatically backfills every single past hour (`async_import_statistics`) to its exact historical timestamp with strict recorder compilation guardrails (`compile_safe_cutoff`).
 - ⚡ **Seamless Energy Dashboard Integration**:
-  The main water meter reading (`m³`) plugs directly into Home Assistant's official Energy Dashboard for hourly, daily, monthly, and yearly consumption tracking.
-- 🕒 **Smart History Backfill & Lightweight Periodic Polling**:
-  Choose how much history to import on setup or in Options Flow (7 days, 30 days, 90 days, 1 year, or All history since meter installation). Routine 4-hour polling fetches a rolling 2-day (48-hour) window to minimize network traffic and portal load.
+  The main water meter reading (`m³`, 3-decimal 1-liter precision) plugs directly into Home Assistant's official Energy Dashboard for hourly, daily, monthly, and yearly consumption and tariff tracking.
+- 🕒 **One-Shot History Backfill & Lightweight 1-Hour Polling**:
+  Choose how much history to import on initial setup or via Options Flow (7 days, 30 days, 90 days, 1 year, or All history since meter installation). Once imported, subsequent Home Assistant restarts and routine 1-hour polls fetch only a lightweight rolling 2-day (48-hour) window (~2.5 KB) for instant startup and minimal portal load.
 - 🔒 **Zero External Dependencies**:
   Built using Python standard library tools (`html.parser`, `urllib`, `http.cookiejar`) with automatic CSRF token handling and session re-authentication.
 - 🌐 **Full Localization**:
@@ -94,10 +94,12 @@ The following 17 water utilities are verified and available directly in the setu
 
 ## Entities
 
+For `kaarinanvesihuolto`, the entities are named `sensor.kaarina_water_*` (for other utilities, `sensor.<subdomain>_*`):
+
 | Entity ID | Unit | Description |
 | :--- | :--- | :--- |
-| `sensor.kaarina_water_meter_reading` | $m^3$ | Cumulative water meter reading. Configurable in Energy Dashboard. |
-| `sensor.kaarina_water_last_reported` | timestamp | Timestamp when the water meter last transmitted data. |
+| `sensor.kaarina_water_meter_reading` | $\text{m}^3$ | Cumulative water meter reading (`total_increasing`, 3 decimals). Exposes attributes `today_consumption_l`, `yesterday_consumption_l`, `last_24h_consumption_l`, `last_hour_consumption_l`, and `last_reported`. |
+| `sensor.kaarina_water_last_reported` | timestamp | Timestamp when the water meter last transmitted data to the portal. |
 
 ---
 
@@ -106,7 +108,7 @@ The following 17 water utilities are verified and available directly in the setu
 1. Go to **Settings $\rightarrow$ Dashboards $\rightarrow$ Energy**.
 2. Under **Water consumption**, click **Add water source**.
 3. Select `sensor.kaarina_water_meter_reading`.
-4. (Optional) Set your water price per $m^3$ (e.g. `6.15` EUR/$m^3$ in Kaarina).
+4. (Optional) Set your static water price per $\text{m}^3$ (e.g. `6.15` EUR/$\text{m}^3$ in Kaarina).
 
 ---
 

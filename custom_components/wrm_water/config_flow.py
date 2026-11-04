@@ -15,10 +15,10 @@ from homeassistant.helpers import selector
 from .const import (
     CONF_CUSTOMER_ID,
     CONF_HISTORY_DAYS,
+    CONF_INITIAL_IMPORT_DONE,
     CONF_METER_SERIAL,
     CONF_SUBDOMAIN,
     DEFAULT_HISTORY_DAYS,
-    DEFAULT_SUBDOMAIN,
     DOMAIN,
     HISTORY_DAYS_OPTIONS,
     SUBDOMAIN_OPTIONS,
@@ -88,6 +88,8 @@ class WRMWaterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 )
                 if not data:
                     errors["base"] = "no_readings"
+            except PermissionError:
+                errors["base"] = "invalid_auth"
             except Exception as ex:
                 _LOGGER.exception("Failed to connect to WRM Systems: %s", ex)
                 errors["base"] = "cannot_connect"
@@ -111,6 +113,7 @@ class WRMWaterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         CONF_METER_SERIAL: meter_serial,
                         CONF_SUBDOMAIN: subdomain,
                         CONF_HISTORY_DAYS: history_days,
+                        CONF_INITIAL_IMPORT_DONE: False,
                     },
                 )
 
@@ -129,6 +132,9 @@ class WRMWaterOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Manage the options."""
         if user_input is not None:
+            # Reset initial_import_done flag in entry.data so the selected history range is imported once on reload
+            new_data = {**self.config_entry.data, CONF_INITIAL_IMPORT_DONE: False}
+            self.hass.config_entries.async_update_entry(self.config_entry, data=new_data)
             return self.async_create_entry(title="", data=user_input)
 
         current_history = self.config_entry.options.get(

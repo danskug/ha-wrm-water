@@ -79,6 +79,7 @@ class KaarinaWaterMeterReadingSensor(BaseWRMWaterSensor):
     _attr_device_class = SensorDeviceClass.WATER
     _attr_native_unit_of_measurement = UnitOfVolume.CUBIC_METERS
     _attr_state_class = SensorStateClass.TOTAL_INCREASING
+    _attr_suggested_display_precision = 3
 
     def __init__(
         self, coordinator: WRMWaterDataUpdateCoordinator, entry: ConfigEntry
@@ -104,6 +105,9 @@ class KaarinaWaterMeterReadingSensor(BaseWRMWaterSensor):
         return {
             "last_reported": self.coordinator.data.get("last_reported"),
             "last_hour_consumption_l": self.coordinator.data.get("last_hour_liters"),
+            "today_consumption_l": self.coordinator.data.get("today_liters"),
+            "yesterday_consumption_l": self.coordinator.data.get("yesterday_liters"),
+            "last_24h_consumption_l": self.coordinator.data.get("last_24h_liters"),
             "last_timestamp": self.coordinator.data.get("last_timestamp"),
         }
 
@@ -133,4 +137,3 @@ class KaarinaWaterLastReportedSensor(BaseWRMWaterSensor):
         if not epoch:
             return None
         return datetime.datetime.fromtimestamp(int(epoch), tz=datetime.timezone.utc)
-

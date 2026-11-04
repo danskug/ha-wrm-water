@@ -1,21 +1,22 @@
 """Constants for the WRM Systems Water integration."""
 
+from homeassistant.helpers import selector
+
 DOMAIN = "wrm_water"
 
 DEFAULT_NAME = "Kaarina Water"
 DEFAULT_SUBDOMAIN = "kaarinanvesihuolto"
-DEFAULT_SCAN_INTERVAL_HOURS = 4
+DEFAULT_SCAN_INTERVAL_HOURS = 1
 
 CONF_SUBDOMAIN = "subdomain"
 CONF_CUSTOMER_ID = "customer_id"  # login-input-a
 CONF_METER_SERIAL = "meter_serial"  # login-input-b
 CONF_STATISTIC_ID = "statistic_id"  # default: sensor.kaarina_water_meter_reading
 CONF_HISTORY_DAYS = "history_days"
+CONF_INITIAL_IMPORT_DONE = "initial_import_done"
 
 DEFAULT_HISTORY_DAYS = "7"
 HISTORY_DAYS_OPTIONS = ["7", "30", "90", "365", "all"]
-
-from homeassistant.helpers import selector
 
 SUBDOMAIN_OPTIONS: list[selector.SelectOptionDict] = [
     selector.SelectOptionDict(value="kaarinanvesihuolto", label="Kaarinan Vesihuolto (kaarinanvesihuolto)"),
@@ -40,4 +41,3 @@ SUBDOMAIN_OPTIONS: list[selector.SelectOptionDict] = [
 BASE_URL = "https://wmd.wrm-systems.fi"
 LOGIN_PATH = "/{subdomain}/login"
 READINGS_PATH = "/data/readings"
-

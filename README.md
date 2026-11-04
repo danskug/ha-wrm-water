@@ -129,6 +129,7 @@ For `kaarinanvesihuolto`, the entities are named `sensor.kaarina_water_*` (for o
 
 ---
 
-## License
+## License & Trademarks
 
-[MIT License](LICENSE) — Provided "AS IS", without warranty of any kind.
+- **Source Code**: Licensed under the [MIT License](LICENSE) — provided "AS IS", without warranty of any kind.
+- **Trademarks & Logos**: *WRM Systems* and the WRM Systems logo are trademarks/property of **WRM Systems Oy** (and *Axioma Qalcosonic* is a trademark of **Axioma Metering UAB**). They are used here solely for identification purposes within the Home Assistant interface and are not covered by the MIT License. This project is independent and not affiliated with or endorsed by WRM Systems Oy.

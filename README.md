@@ -10,6 +10,15 @@
 
 Home Assistant integration for remote-read smart water meters connected to **WRM Systems** (`wmd.wrm-systems.fi`). **Tested and verified in production with Kaarinan Vesihuolto**, and supports numerous Finnish municipal water utilities and cooperatives using Axioma Qalcosonic W1 ultrasonic meters.
 
+- 🇫🇮 **Suomeksi**: Home Assistant (HACS) -integraatio **WRM Systems Oy:n** (`wmd.wrm-systems.fi`) etäluettaville vesimittareille (esim. *Axioma Qalcosonic W1*). Tuo tuntikohtaisen vedenkulutuksen ja mittarilukeman ($\text{m}^3$) suoraan Home Assistantin Energianäkymään (*Energy Dashboard* / *Long-Term Statistics*). Toimii mm. seuraavien vesilaitosten kulutusseurannassa: *Kaarinan Vesihuolto, Oulun Vesi, Kangasalan Vesi, Kirkkonummen Vesi, Salon Vesi, Seinäjoen Vesi, Ylöjärven Vesi, Vihdin Vesi, Kajaanin Vesi, Sastamalan Vesi, Loimaan Vesi, Orimattilan Vesi, Keski-Savon Vesi, Suonenjoen Vesi, Lumijoen Vesi, Vaalan Vesi ja Lämpö* sekä *Pyhä-Luosto Vesi*.
+- 🇸🇪 **På svenska**: Home Assistant (HACS)-integration för fjärravlästa smarta vattenmätare anslutna till **WRM Systems** (`wmd.wrm-systems.fi`, t.ex. *Axioma Qalcosonic W1*). Importerar timvis vattenförbrukning och mätarställning ($\text{m}^3$) direkt till Home Assistants Energipanel (*Långtidsstatistik / LTS*).
+
+> [!WARNING]
+> **Use at Your Own Risk — Unofficial & Unmaintained Personal Project**
+> - **English**: This is an unofficial personal hobby project shared **"AS IS" without warranty of any kind**. Use it entirely **at your own risk**. The author **does not actively maintain** this repository, does not guarantee compatibility with future Home Assistant or WRM Systems updates, and does not provide technical support.
+> - **Suomeksi**: Tämä on epävirallinen, omaan käyttöön tehty harrasteprojekti, joka jaetaan **sellaisenaan ("AS IS") ilman minkäänlaista takuuta**. Käyttö tapahtuu täysin **omalla vastuulla**. Tekijä **ei ylläpidä** projektia aktiivisesti eikä tarjoa sille tukea.
+> - **Svenska**: Detta är ett inofficiellt privat hobbyprojekt som delas **i befintligt skick ("AS IS") utan några garantier**. Användning sker helt **på egen risk**. Upphovsmannen **underhåller inte** repot aktivt och erbjuder ingen support.
+
 ---
 
 ## Key Features
@@ -112,15 +121,14 @@ For `kaarinanvesihuolto`, the entities are named `sensor.kaarina_water_*` (for o
 
 ---
 
-## Disclaimer & Support
+## Disclaimer & Support (Ansvarsfriskrivning / Vastuuvapauslauseke)
 
-> [!NOTE]
-> - 🤖 **AI-Assisted Development**: This integration was developed with AI assistance and functions well for the author's private use.
-> - 🤝 **Shared As-Is**: The code is shared openly so that others can benefit from the work done so far or fork and build upon it independently.
-> - 🛠️ **No Active Support**: The author does not provide active user support or implement feature requests unless they provide significant direct value to the author's own setup. Community pull requests and forks are always welcome!
+> [!CAUTION]
+> - ⚠️ **Use at Your Own Risk (Omalla vastuulla / På egen risk)**: This integration is not affiliated with, endorsed by, or supported by WRM Systems Oy or any water utility. It is provided **"AS IS" without warranty of any kind**. You are solely responsible for any use of this integration and any impact on your Home Assistant database or utility account.
+> - 🛠️ **No Active Maintenance or Support**: This is a personal project built for the author's own household (with AI assistance) and shared openly in case others find it useful. **The author does not actively maintain this repository**, does not monitor issues, and does not provide user support or bug fixes unless they directly affect the author's own setup. If you need changes or fixes, please fork the repository.
 
 ---
 
 ## License
 
-MIT License
+[MIT License](LICENSE) — Provided "AS IS", without warranty of any kind.

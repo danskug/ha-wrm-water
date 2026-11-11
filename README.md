@@ -8,14 +8,14 @@
 
 # WRM Systems Water for Home Assistant
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/default)
+[![marketplace_badge](https://img.shields.io/badge/Marketplace-Custom-41BDF5.svg)](https://github.com/danskug/ha-wrm-water)
 [![GitHub release](https://img.shields.io/github/v/release/danskug/ha-wrm-water)](https://github.com/danskug/ha-wrm-water/releases)
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=danskug&repository=ha-wrm-water&category=integration)
 
 Home Assistant integration for remote-read smart water meters connected to **WRM Systems** (`wmd.wrm-systems.fi`). **Tested and verified in production with Kaarinan Vesihuolto**, and supports numerous Finnish municipal water utilities and cooperatives using Axioma Qalcosonic W1 ultrasonic meters.
 
-- **Suomeksi (FI)**: Home Assistant (HACS) -integraatio **WRM Systems Oy:n** (`wmd.wrm-systems.fi`) etäluettaville vesimittareille (esim. *Axioma Qalcosonic W1*). Tuo tuntikohtaisen vedenkulutuksen ja mittarilukeman (m³) suoraan Home Assistantin energianäkymään (*Energy Dashboard* / *Long-Term Statistics*). Testattu tuotantokäytössä Kaarinan Vesihuollolla; tukee myös vähintään 16 muuta suomalaista vesilaitosta (katso lista alempana).
-- **Svenska (SE)**: Home Assistant (HACS)-integration för fjärravlästa smarta vattenmätare anslutna till **WRM Systems** (`wmd.wrm-systems.fi`, t.ex. *Axioma Qalcosonic W1*). Importerar timvis vattenförbrukning och mätarställning (m³) direkt till Home Assistants energipanel (*Långtidsstatistik / LTS*). Testad i drift med Kaarinan Vesihuolto och stöder 16+ finska vattenverk.
+- **Suomeksi (FI)**: Home Assistant Marketplace -integraatio **WRM Systems Oy:n** (`wmd.wrm-systems.fi`) etäluettaville vesimittareille (esim. *Axioma Qalcosonic W1*). Tuo tuntikohtaisen vedenkulutuksen ja mittarilukeman (m³) suoraan Home Assistantin energianäkymään (*Energy Dashboard* / *Long-Term Statistics*). Testattu tuotantokäytössä Kaarinan Vesihuollolla; tukee myös vähintään 16 muuta suomalaista vesilaitosta (katso lista alempana).
+- **Svenska (SE)**: Home Assistant Marketplace-integration för fjärravlästa smarta vattenmätare anslutna till **WRM Systems** (`wmd.wrm-systems.fi`, t.ex. *Axioma Qalcosonic W1*). Importerar timvis vattenförbrukning och mätarställning (m³) direkt till Home Assistants energipanel (*Långtidsstatistik / LTS*). Testad i drift med Kaarinan Vesihuolto och stöder 16+ finska vattenverk.
 
 > ⚠️ **Use at Your Own Risk — Unofficial & Unmaintained Personal Project**
 >
@@ -40,23 +40,23 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
 
 ---
 
-## Installation via HACS
+## Installation via Home Assistant Marketplace
 
 ### 1-Click Install
 Click the button below to add this repository directly to your Home Assistant instance:
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=danskug&repository=ha-wrm-water&category=integration)
 
-### Manual HACS Install
-1. Make sure [HACS](https://hacs.xyz/) is installed.
-2. In Home Assistant, open **HACS**.
+### Manual Install via Marketplace
+1. Make sure **Marketplace** (formerly HACS) is installed.
+2. In Home Assistant, open **Marketplace**.
 3. Click the three dots (top right) → **Custom repositories**.
 4. Add repository URL:
    ```
    https://github.com/danskug/ha-wrm-water
    ```
 5. Select Type: **Integration** and click **Add**.
-6. Find **WRM Systems Water** in HACS and click **Download**.
+6. Find **WRM Systems Water** in Marketplace and click **Download**.
 7. Restart Home Assistant.
 
 ---

@@ -1,0 +1,35 @@
+name: Update Metadata
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update description and topics
+        run: |
+          gh repo edit danskug/ha-wrm-water \
+            --description "Home Assistant (HACS) integration for remote-read smart water meters on WRM Systems (e.g. Kaarinan Vesihuolto & Axioma Qalcosonic W1). Unofficial & unsupported personal project." \
+            --homepage "https://github.com/danskug/ha-wrm-water" \
+            --add-topic "home-assistant" \
+            --add-topic "hacs" \
+            --add-topic "hacs-integration" \
+            --add-topic "water-meter" \
+            --add-topic "smart-meter" \
+            --add-topic "wrm-systems" \
+            --add-topic "kaarinan-vesihuolto" \
+            --add-topic "axioma" \
+            --add-topic "axioma-qalcosonic-w1" \
+            --add-topic "energy-dashboard" \
+            --add-topic "finland" \
+            --add-topic "suomi" \
+            --add-topic "vesimittari" \
+            --add-topic "iot"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

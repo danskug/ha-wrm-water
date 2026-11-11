@@ -14,24 +14,11 @@ CONF_METER_SERIAL = "meter_serial"  # login-input-b
 CONF_STATISTIC_ID = "statistic_id"  # default: sensor.kaarina_water_meter_reading
 CONF_INITIAL_IMPORT_DONE = "initial_import_done"
 
-# History configuration (v1.1.0+)
-CONF_HISTORY_MODE = "history_mode"
+# History configuration (v1.1.2+)
 CONF_START_DATE = "start_date"
 
-HISTORY_MODE_ALL = "all"
-HISTORY_MODE_1_YEAR = "1_year"
-HISTORY_MODE_1_MONTH = "1_month"
-HISTORY_MODE_CUSTOM = "custom"
-
-HISTORY_MODE_OPTIONS = [
-    HISTORY_MODE_ALL,
-    HISTORY_MODE_1_YEAR,
-    HISTORY_MODE_1_MONTH,
-    HISTORY_MODE_CUSTOM,
-]
-DEFAULT_HISTORY_MODE = HISTORY_MODE_ALL
-
-# Legacy history options (< v1.1.0 fallback)
+# Legacy history options (< v1.1.2 fallback)
+CONF_HISTORY_MODE = "history_mode"
 CONF_HISTORY_DAYS = "history_days"
 DEFAULT_HISTORY_DAYS = "7"
 HISTORY_DAYS_OPTIONS = ["7", "30", "90", "365", "all"]

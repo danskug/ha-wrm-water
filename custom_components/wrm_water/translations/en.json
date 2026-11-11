@@ -12,10 +12,9 @@
       },
       "history": {
         "title": "Historical Water Consumption",
-        "description": "Water meter connected successfully!\n\nData is available starting from **{earliest_date}** (initial reading: **{earliest_m3} m³**, latest reading: **{latest_m3} m³**).\n\nSelect the time period to import into Home Assistant's Energy Dashboard:",
+        "description": "Water meter connected successfully!\n\nHistorical data is available from **{earliest_date}** (initial reading: **{earliest_m3} m³**, latest reading: **{latest_m3} m³**).\n\nThe calendar is preset to the earliest available date. You can keep it to import all history, or select a custom date (e.g. your move-in date):",
         "data": {
-          "history_mode": "History Period",
-          "start_date": "Custom Start Date (Calendar)"
+          "start_date": "Import history from date"
         }
       }
     },
@@ -32,30 +31,10 @@
     "step": {
       "init": {
         "title": "Configure WRM Systems Water",
-        "description": "Select the start date or time period for importing historical hourly water consumption into Home Assistant.",
+        "description": "Select the start date from which historical hourly water consumption should be imported into Home Assistant:",
         "data": {
-          "history_mode": "History Period",
-          "start_date": "Custom Start Date (Calendar)"
+          "start_date": "Import history from date"
         }
-      }
-    }
-  },
-  "selector": {
-    "history_mode": {
-      "options": {
-        "all": "From the beginning (All available data)",
-        "1_year": "1 year back",
-        "1_month": "1 month back (30 days)",
-        "custom": "From custom specified date (Calendar)"
-      }
-    },
-    "history_days": {
-      "options": {
-        "7": "7 days (Past week)",
-        "30": "30 days (Past month)",
-        "90": "90 days (Past 3 months)",
-        "365": "1 year (Past year)",
-        "all": "All history (Since installation / 2022)"
       }
     }
   },

@@ -12,10 +12,9 @@
       },
       "history": {
         "title": "Kulutushistorian tuonti",
-        "description": "Vesimittari löydetty onnistuneesti!\n\nKulutustietoja saatavilla alkaen **{earliest_date}** (alkulukema: **{earliest_m3} m³**, uusin lukema: **{latest_m3} m³**).\n\nValitse mistä alkaen tuntikohtainen historia tuodaan Home Assistantin energianäkymään:",
+        "description": "Vesimittari löydetty onnistuneesti!\n\nKulutustietoja on saatavilla alkaen **{earliest_date}** (alkulukema: **{earliest_m3} m³**, uusin lukema: **{latest_m3} m³**).\n\nKalenteri on esiasetettu varhaisimpaan saatavilla olevaan päivämäärään. Voit tuoda koko historian tai muuttaa päivämäärää (esim. muuttopäiväsi):",
         "data": {
-          "history_mode": "Tuotava ajanjakso",
-          "start_date": "Oma aloituspäivämäärä (kalenteri)"
+          "start_date": "Tuo kulutushistoria alkaen (päivämäärä)"
         }
       }
     },
@@ -32,30 +31,10 @@
     "step": {
       "init": {
         "title": "WRM Systems Vesi -asetukset",
-        "description": "Valitse mistä alkaen tuntikohtainen vedenkulutushistoria tuodaan Home Assistantin energianäkymään.",
+        "description": "Valitse päivämäärä, josta alkaen tuntikohtainen vedenkulutushistoria tuodaan Home Assistantiin:",
         "data": {
-          "history_mode": "Tuotava ajanjakso",
-          "start_date": "Oma aloituspäivämäärä (kalenteri)"
+          "start_date": "Tuo kulutushistoria alkaen (päivämäärä)"
         }
-      }
-    }
-  },
-  "selector": {
-    "history_mode": {
-      "options": {
-        "all": "Alusta alkaen (Kaikki saatavilla oleva data)",
-        "1_year": "1 vuosi",
-        "1_month": "1 kuukausi (30 päivää)",
-        "custom": "Oma aloituspäivämäärä (valitse kalenterista)"
-      }
-    },
-    "history_days": {
-      "options": {
-        "7": "7 päivää (Viime viikko)",
-        "30": "30 päivää (Viime kuukausi)",
-        "90": "90 päivää (Viimeiset 3 kk)",
-        "365": "1 vuosi (Viime vuosi)",
-        "all": "Koko historia (Mittarin asennuksesta / 2022 alkaen)"
       }
     }
   },

@@ -12,10 +12,9 @@
       },
       "history": {
         "title": "Historisk vattenförbrukning",
-        "description": "Vattenmätare hittades utan problem!\n\nMätardata finns tillgänglig från och med **{earliest_date}** (startmätarställning: **{earliest_m3} m³**, senaste mätarställning: **{latest_m3} m³**).\n\nVälj vilken period du vill importera till Home Assistants energipanel:",
+        "description": "Vattenmätare hittades utan problem!\n\nHistorisk data finns tillgänglig från och med **{earliest_date}** (startmätarställning: **{earliest_m3} m³**, senaste mätarställning: **{latest_m3} m³**).\n\nKalendern är förinställd på det tidigaste datumet. Du kan behålla det för att hämta all historik, eller ändra datumet om du vill börja från t.ex. ditt inflyttningsdatum:",
         "data": {
-          "history_mode": "Tidsperiod att importera",
-          "start_date": "Specificerat startdatum (kalender)"
+          "start_date": "Importera historik från och med"
         }
       }
     },
@@ -32,30 +31,10 @@
     "step": {
       "init": {
         "title": "Konfigurera WRM Systems Vatten",
-        "description": "Välj från vilket datum eller vilken period du vill importera timvis historisk vattenförbrukning till Home Assistant.",
+        "description": "Välj från vilket datum historisk timvis vattenförbrukning ska importeras till Home Assistant:",
         "data": {
-          "history_mode": "Tidsperiod att importera",
-          "start_date": "Specificerat startdatum (kalender)"
+          "start_date": "Importera historik från och med"
         }
-      }
-    }
-  },
-  "selector": {
-    "history_mode": {
-      "options": {
-        "all": "Från start (All tillgänglig historik)",
-        "1_year": "1 år bakåt",
-        "1_month": "1 månad bakåt (30 dagar)",
-        "custom": "Från specificerat datum (välj i kalendern)"
-      }
-    },
-    "history_days": {
-      "options": {
-        "7": "7 dagar (Senaste veckan)",
-        "30": "30 dagar (Senaste månaden)",
-        "90": "90 dagar (Senaste 3 månaderna)",
-        "365": "1 år (Senaste året)",
-        "all": "All historik (Sedan installation / 2022)"
       }
     }
   },

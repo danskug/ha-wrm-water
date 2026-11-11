@@ -14,19 +14,11 @@ from homeassistant.helpers import selector
 
 from .const import (
     CONF_CUSTOMER_ID,
-    CONF_HISTORY_DAYS,
-    CONF_HISTORY_MODE,
     CONF_INITIAL_IMPORT_DONE,
     CONF_METER_SERIAL,
     CONF_START_DATE,
     CONF_SUBDOMAIN,
-    DEFAULT_HISTORY_MODE,
     DOMAIN,
-    HISTORY_MODE_1_MONTH,
-    HISTORY_MODE_1_YEAR,
-    HISTORY_MODE_ALL,
-    HISTORY_MODE_CUSTOM,
-    HISTORY_MODE_OPTIONS,
     SUBDOMAIN_OPTIONS,
 )
 from .coordinator import WRMClient
@@ -139,35 +131,20 @@ class WRMWaterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_history(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Handle the second step: selecting history range / custom start date."""
+        """Handle the second step: choosing start date via preset calendar."""
         errors: dict[str, str] = {}
         earliest_date = self._discovered_info.get("earliest_date", "2020-01-01")
         earliest_m3 = self._discovered_info.get("earliest_m3", 0.0)
         latest_m3 = self._discovered_info.get("latest_m3", 0.0)
 
         if user_input is not None:
-            history_mode = user_input.get(CONF_HISTORY_MODE, DEFAULT_HISTORY_MODE)
-            now_utc = datetime.datetime.now(datetime.timezone.utc)
-
-            if history_mode == HISTORY_MODE_ALL:
-                start_date = earliest_date
-            elif history_mode == HISTORY_MODE_1_YEAR:
-                start_date = (now_utc - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
-            elif history_mode == HISTORY_MODE_1_MONTH:
-                start_date = (now_utc - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
-            elif history_mode == HISTORY_MODE_CUSTOM:
-                custom_val = user_input.get(CONF_START_DATE)
-                start_date = str(custom_val) if custom_val else earliest_date
-            else:
-                start_date = earliest_date
-
+            start_date = str(user_input.get(CONF_START_DATE, earliest_date))
             return self.async_create_entry(
                 title=self._discovered_info["entry_title"],
                 data={
                     CONF_CUSTOMER_ID: self._discovered_info[CONF_CUSTOMER_ID],
                     CONF_METER_SERIAL: self._discovered_info[CONF_METER_SERIAL],
                     CONF_SUBDOMAIN: self._discovered_info[CONF_SUBDOMAIN],
-                    CONF_HISTORY_MODE: history_mode,
                     CONF_START_DATE: start_date,
                     CONF_INITIAL_IMPORT_DONE: False,
                 },
@@ -176,15 +153,6 @@ class WRMWaterConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         history_schema = vol.Schema(
             {
                 vol.Required(
-                    CONF_HISTORY_MODE, default=DEFAULT_HISTORY_MODE
-                ): selector.SelectSelector(
-                    selector.SelectSelectorConfig(
-                        options=HISTORY_MODE_OPTIONS,
-                        mode=selector.SelectSelectorMode.DROPDOWN,
-                        translation_key="history_mode",
-                    )
-                ),
-                vol.Optional(
                     CONF_START_DATE, default=earliest_date
                 ): selector.DateSelector(
                     selector.DateSelectorConfig()
@@ -212,34 +180,17 @@ class WRMWaterOptionsFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Manage the options."""
         if user_input is not None:
-            history_mode = user_input.get(CONF_HISTORY_MODE, DEFAULT_HISTORY_MODE)
-            now_utc = datetime.datetime.now(datetime.timezone.utc)
-
-            if history_mode == HISTORY_MODE_ALL:
-                start_date = "2010-01-01"
-            elif history_mode == HISTORY_MODE_1_YEAR:
-                start_date = (now_utc - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
-            elif history_mode == HISTORY_MODE_1_MONTH:
-                start_date = (now_utc - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
-            elif history_mode == HISTORY_MODE_CUSTOM:
-                start_date = str(user_input.get(CONF_START_DATE, "2010-01-01"))
-            else:
-                start_date = "2010-01-01"
+            start_date = str(user_input.get(CONF_START_DATE, "2010-01-01"))
 
             # Reset initial_import_done flag in entry.data so the newly selected date range is imported on reload
             new_data = {
                 **self.config_entry.data,
                 CONF_START_DATE: start_date,
-                CONF_HISTORY_MODE: history_mode,
                 CONF_INITIAL_IMPORT_DONE: False,
             }
             self.hass.config_entries.async_update_entry(self.config_entry, data=new_data)
             return self.async_create_entry(title="", data=user_input)
 
-        current_mode = self.config_entry.options.get(
-            CONF_HISTORY_MODE,
-            self.config_entry.data.get(CONF_HISTORY_MODE, DEFAULT_HISTORY_MODE),
-        )
         current_date = self.config_entry.options.get(
             CONF_START_DATE,
             self.config_entry.data.get(
@@ -251,15 +202,6 @@ class WRMWaterOptionsFlowHandler(config_entries.OptionsFlow):
         options_schema = vol.Schema(
             {
                 vol.Required(
-                    CONF_HISTORY_MODE, default=current_mode
-                ): selector.SelectSelector(
-                    selector.SelectSelectorConfig(
-                        options=HISTORY_MODE_OPTIONS,
-                        mode=selector.SelectSelectorMode.DROPDOWN,
-                        translation_key="history_mode",
-                    )
-                ),
-                vol.Optional(
                     CONF_START_DATE, default=current_date
                 ): selector.DateSelector(
                     selector.DateSelectorConfig()

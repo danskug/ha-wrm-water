@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Create Release
         run: |
@@ -27,9 +29,11 @@ jobs:
             echo "Marking as pre-release"
           fi
           
+          NOTES=$(git log -1 --pretty=%B)
+          
           gh release create "$TAG" \
             $PRERELEASE_FLAG \
             --title "$TAG" \
-            --generate-notes
+            --notes "$NOTES"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

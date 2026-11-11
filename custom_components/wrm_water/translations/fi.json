@@ -31,7 +31,7 @@
     "step": {
       "init": {
         "title": "WRM Systems Vesi -asetukset",
-        "description": "Valitse päivämäärä, josta alkaen tuntikohtainen vedenkulutushistoria tuodaan Home Assistantiin:",
+        "description": "Historiadataa on saatavilla alkaen **{earliest_date}** (alkulukema: **{earliest_m3} m³**, uusin lukema: **{latest_m3} m³**).\n\nKalenteri on esiasetettu varhaisimpaan päivämäärään. Voit säilyttää sen tuodaksesi kaiken historian, tai valita haluamasi päivämäärän (esim. muuttopäivän):",
         "data": {
           "start_date": "Tuo kulutushistoria alkaen (päivämäärä)"
         }

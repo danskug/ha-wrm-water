@@ -31,7 +31,7 @@
     "step": {
       "init": {
         "title": "Konfigurera WRM Systems Vatten",
-        "description": "Välj från vilket datum historisk timvis vattenförbrukning ska importeras till Home Assistant:",
+        "description": "Historisk data finns tillgänglig från och med **{earliest_date}** (startmätarställning: **{earliest_m3} m³**, senaste mätarställning: **{latest_m3} m³**).\n\nKalendern är förinställd på det tidigaste datumet. Du kan behålla det för att hämta all historik, eller ändra datumet om du vill börja från t.ex. ditt inflyttningsdatum:",
         "data": {
           "start_date": "Importera historik från och med"
         }

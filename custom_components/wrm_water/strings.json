@@ -31,7 +31,7 @@
     "step": {
       "init": {
         "title": "Configure WRM Systems Water",
-        "description": "Select the start date from which historical hourly water consumption should be imported into Home Assistant:",
+        "description": "Historical data is available from **{earliest_date}** (initial reading: **{earliest_m3} m³**, latest reading: **{latest_m3} m³**).\n\nThe calendar is preset to the earliest available date. You can keep it to import all history, or select a custom date (e.g. your move-in date):",
         "data": {
           "start_date": "Import history from date"
         }

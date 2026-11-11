@@ -179,8 +179,44 @@ class WRMWaterOptionsFlowHandler(config_entries.OptionsFlow):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Manage the options."""
+        customer_id = self.config_entry.data.get(CONF_CUSTOMER_ID)
+        meter_serial = self.config_entry.data.get(CONF_METER_SERIAL)
+        subdomain = self.config_entry.data.get(CONF_SUBDOMAIN)
+
+        earliest_date = "2020-01-01"
+        earliest_m3 = 0.0
+        latest_m3 = 0.0
+
+        # Try to obtain discovered earliest reading date from coordinator or query WRM portal
+        coordinator = self.hass.data.get(DOMAIN, {}).get(self.config_entry.entry_id)
+        if coordinator and getattr(coordinator, "discovered_info", None):
+            earliest_date = coordinator.discovered_info.get("earliest_date", earliest_date)
+            earliest_m3 = coordinator.discovered_info.get("earliest_m3", earliest_m3)
+            latest_m3 = coordinator.discovered_info.get("latest_m3", latest_m3)
+        elif customer_id and meter_serial and subdomain:
+            try:
+                client = WRMClient(subdomain=subdomain, customer_id=customer_id, meter_serial=meter_serial)
+                data = await self.hass.async_add_executor_job(client.fetch_readings_sync, "2010-01-01")
+                if data:
+                    earliest_row = data[-1]
+                    latest_row = data[0]
+                    earliest_epoch = int(earliest_row[3])
+                    earliest_date = datetime.datetime.fromtimestamp(
+                        earliest_epoch, tz=datetime.timezone.utc
+                    ).strftime("%Y-%m-%d")
+                    earliest_m3 = round(float(earliest_row[1]), 3)
+                    latest_m3 = round(float(latest_row[1]), 3)
+                    if coordinator:
+                        coordinator.discovered_info = {
+                            "earliest_date": earliest_date,
+                            "earliest_m3": earliest_m3,
+                            "latest_m3": latest_m3,
+                        }
+            except Exception as ex:
+                _LOGGER.warning("Could not pre-search historical date range in options flow: %s", ex)
+
         if user_input is not None:
-            start_date = str(user_input.get(CONF_START_DATE, "2010-01-01"))
+            start_date = str(user_input.get(CONF_START_DATE, earliest_date))
 
             # Reset initial_import_done flag in entry.data so the newly selected date range is imported on reload
             new_data = {
@@ -191,13 +227,10 @@ class WRMWaterOptionsFlowHandler(config_entries.OptionsFlow):
             self.hass.config_entries.async_update_entry(self.config_entry, data=new_data)
             return self.async_create_entry(title="", data=user_input)
 
-        current_date = self.config_entry.options.get(
-            CONF_START_DATE,
-            self.config_entry.data.get(
-                CONF_START_DATE,
-                (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=365)).strftime("%Y-%m-%d"),
-            ),
-        )
+        # Default calendar to saved start_date if explicitly set, otherwise preset to discovered earliest_date
+        current_date = self.config_entry.data.get(CONF_START_DATE)
+        if not current_date:
+            current_date = self.config_entry.options.get(CONF_START_DATE, earliest_date)
 
         options_schema = vol.Schema(
             {
@@ -212,4 +245,9 @@ class WRMWaterOptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="init",
             data_schema=options_schema,
+            description_placeholders={
+                "earliest_date": earliest_date,
+                "earliest_m3": str(earliest_m3),
+                "latest_m3": str(latest_m3),
+            },
         )

@@ -15,50 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Update Release Notes
-        run: |
-          gh release edit v1.1.1 --notes "$(cat << 'EOF'
-### 🧹 Entity Cleanup & Performance Optimization
-- **Clean sensor attributes**: Removed misleading pseudo-realtime consumption attributes (`today_consumption_l`, `yesterday_consumption_l`, `last_24h_consumption_l`, `last_hour_consumption_l`) from `sensor.kaarina_water_meter_reading`. Because water meters only transmit data in batches 3 times per day, these attributes were incomplete.
-- **Energy Dashboard precision**: All hourly, daily, monthly, and yearly consumption tracking is natively handled with 100% precision by Home Assistant's Energy Dashboard via Long-Term Statistics (LTS).
-- **Reduced overhead**: Removed the 72-hour polling calculation loop in the background coordinator for faster execution and lower CPU usage.
-EOF
-)"
-
-          gh release edit v1.1.0 --notes "$(cat << 'EOF'
-### ✨ Pre-Search Discovery & Custom Date Picker
-- **2-step setup flow**:
-  1. **Credential verification & pre-search**: Automatically discovers the water meter's earliest recorded transmission date and initial meter reading from WRM Systems.
-  2. **Flexible history selection**: Choose from **From the beginning** (all available data), **1 year**, **1 month**, or a **custom specified date** via calendar picker.
-- **Move-in date support**: Perfect for new homeowners or ownership transfers to avoid importing previous owners' historical consumption into your Energy Dashboard.
-- **Reconfigurable**: The same choices and calendar picker are available under *Configure* (Options Flow) without reinstalling.
-- **Localization**: Added full English, Finnish, and Swedish translations for the new setup steps.
-EOF
-)"
-
-          gh release edit v1.0.2 --notes "$(cat << 'EOF'
-### 🎨 Marketplace UI & Formatting Improvements
-- **Native Unicode formatting**: Replaced raw KaTeX syntax (`$\text{m}^3$`, `$\rightarrow$`) with clean Unicode (`m³`, `→`) so text renders cleanly in Home Assistant and mobile apps.
-- **Dark mode logo support**: Added theme-aware `<picture>` support that automatically loads `logo_white.png` with crisp white text in dark mode.
-- **Reliable language tags**: Replaced flag emojis with robust language markers (`FI`, `SE`) that display properly across all devices and webviews.
-- **Cleaner warning blocks**: Replaced GitHub-specific callout syntax with universal Markdown blockquotes.
-- **Regional discovery**: Added `"country": ["FI"]` to `hacs.json` for enhanced discovery in Finland.
-EOF
-)"
-
-          gh release edit v1.0.1 --notes "$(cat << 'EOF'
-### 🐛 Long-Term Statistics (LTS) Collision Guard
-- **Immediate hourly updates**: Adjusted `compile_safe_cutoff` to `now_hour` (after :00:25) so that `now_hour - 1h` updates immediately after compilation without negative temporary dips or SQLite constraint collisions.
-EOF
-)"
-
-          gh release edit v1.0.0 --notes "$(cat << 'EOF'
-### 🎉 Initial Stable Release
-- **Hourly LTS injection**: Direct automated backfilling of historical hourly consumption into Home Assistant Long-Term Statistics.
-- **Energy Dashboard**: Native water source integration with 1-liter (0.001 m³) precision.
-- **Lightweight polling**: One-time historical backfill with fast 1-hour routine checks (~2.5 KB).
-- **Multi-utility support**: Verified in production with Kaarinan Vesihuolto, with pre-configured support for 16+ Finnish municipal water utilities.
-EOF
-)"
+      - name: Run Python script
+        run: python3 scripts/update_release_notes.py
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

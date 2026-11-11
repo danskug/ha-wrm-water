@@ -7,8 +7,15 @@
         "data": {
           "customer_id": "Maksajan numero (login-input-a)",
           "meter_serial": "Vesimittarin sarjanumero (login-input-b)",
-          "subdomain": "Vesilaitos / Aliverkkotunnus",
-          "history_days": "Tuotava historia"
+          "subdomain": "Vesilaitos / Aliverkkotunnus"
+        }
+      },
+      "history": {
+        "title": "Kulutushistorian tuonti",
+        "description": "Vesimittari löydetty onnistuneesti!\n\nKulutustietoja saatavilla alkaen **{earliest_date}** (alkulukema: **{earliest_m3} m³**, uusin lukema: **{latest_m3} m³**).\n\nValitse mistä alkaen tuntikohtainen historia tuodaan Home Assistantin energianäkymään:",
+        "data": {
+          "history_mode": "Tuotava ajanjakso",
+          "start_date": "Oma aloituspäivämäärä (kalenteri)"
         }
       }
     },
@@ -25,14 +32,23 @@
     "step": {
       "init": {
         "title": "WRM Systems Vesi -asetukset",
-        "description": "Valitse kuinka pitkältä ajalta tuntikohtainen vedenkulutushistoria tuodaan Home Assistantiin.",
+        "description": "Valitse mistä alkaen tuntikohtainen vedenkulutushistoria tuodaan Home Assistantin energianäkymään.",
         "data": {
-          "history_days": "Tuotava historia"
+          "history_mode": "Tuotava ajanjakso",
+          "start_date": "Oma aloituspäivämäärä (kalenteri)"
         }
       }
     }
   },
   "selector": {
+    "history_mode": {
+      "options": {
+        "all": "Alusta alkaen (Kaikki saatavilla oleva data)",
+        "1_year": "1 vuosi",
+        "1_month": "1 kuukausi (30 päivää)",
+        "custom": "Oma aloituspäivämäärä (valitse kalenterista)"
+      }
+    },
     "history_days": {
       "options": {
         "7": "7 päivää (Viime viikko)",

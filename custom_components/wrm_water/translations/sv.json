@@ -7,8 +7,15 @@
         "data": {
           "customer_id": "Kund- / Betalarnummer (login-input-a)",
           "meter_serial": "Vattenmätarens serienummer (login-input-b)",
-          "subdomain": "Vattenverk / Underdomän",
-          "history_days": "Historik att importera"
+          "subdomain": "Vattenverk / Underdomän"
+        }
+      },
+      "history": {
+        "title": "Historisk vattenförbrukning",
+        "description": "Vattenmätare hittades utan problem!\n\nMätardata finns tillgänglig från och med **{earliest_date}** (startmätarställning: **{earliest_m3} m³**, senaste mätarställning: **{latest_m3} m³**).\n\nVälj vilken period du vill importera till Home Assistants energipanel:",
+        "data": {
+          "history_mode": "Tidsperiod att importera",
+          "start_date": "Specificerat startdatum (kalender)"
         }
       }
     },
@@ -25,14 +32,23 @@
     "step": {
       "init": {
         "title": "Konfigurera WRM Systems Vatten",
-        "description": "Välj hur långt bakåt du vill importera timvis historisk vattenförbrukning till Home Assistant.",
+        "description": "Välj från vilket datum eller vilken period du vill importera timvis historisk vattenförbrukning till Home Assistant.",
         "data": {
-          "history_days": "Historik att importera"
+          "history_mode": "Tidsperiod att importera",
+          "start_date": "Specificerat startdatum (kalender)"
         }
       }
     }
   },
   "selector": {
+    "history_mode": {
+      "options": {
+        "all": "Från start (All tillgänglig historik)",
+        "1_year": "1 år bakåt",
+        "1_month": "1 månad bakåt (30 dagar)",
+        "custom": "Från specificerat datum (välj i kalendern)"
+      }
+    },
     "history_days": {
       "options": {
         "7": "7 dagar (Senaste veckan)",

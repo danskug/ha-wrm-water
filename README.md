@@ -31,8 +31,8 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
   Water utilities report data in periodic batches (typically every 8 hours around 06:00, 14:00, and 22:00). Unlike standard scrapers that dump an entire batch's consumption as a single clump when polled, this integration automatically backfills every single past hour (`async_import_statistics`) to its exact historical timestamp with strict recorder compilation guardrails (`compile_safe_cutoff`).
 - ⚡ **Seamless Energy Dashboard Integration**:
   The main water meter reading (`m³`, 3-decimal 1-liter precision) plugs directly into Home Assistant's official Energy Dashboard for hourly, daily, monthly, and yearly consumption and tariff tracking.
-- 🕒 **One-Shot History Backfill & Lightweight 1-Hour Polling**:
-  Choose how much history to import on initial setup or via Options Flow (7 days, 30 days, 90 days, 1 year, or All history since meter installation). Once imported, subsequent Home Assistant restarts and routine 1-hour polls fetch only a lightweight rolling 2-day (48-hour) window (~2.5 KB) for instant startup and minimal portal load.
+- 🕒 **Pre-Search Discovery & Flexible Historical Import**:
+  Upon setup, the integration queries WRM Systems to automatically discover the meter's exact earliest reported reading date and available historical range. Choose from **all history from the start**, **1 year**, **1 month**, or a **custom specified date** via calendar picker (ideal for move-in dates or ownership changes). Once imported, routine 1-hour polls fetch only a lightweight rolling 2-day window (~2.5 KB) for minimal load.
 - 🔒 **Zero External Dependencies**:
   Built using Python standard library tools (`html.parser`, `urllib`, `http.cookiejar`) with automatic CSRF token handling and session re-authentication.
 - 🌐 **Full Localization**:
@@ -65,12 +65,17 @@ Click the button below to add this repository directly to your Home Assistant in
 
 1. In Home Assistant, go to **Settings → Devices & Services → Add Integration**.
 2. Search for **WRM Systems Water** (or **WRM Systems Vesi**).
-3. Enter your portal credentials:
+3. **Step 1: Enter portal credentials**:
    - **Customer / Payer Number (Maksajan numero)**: Found on your water bill (e.g. `12345`).
    - **Meter Serial Number (Mittarin sarjanumero)**: Printed on your Axioma water meter (e.g. `01234567`).
-   - **Water Utility / Subdomain**: Select your water utility from the searchable dropdown list, or type a custom subdomain if your utility is not in the list.
-   - **History to Import**: Choose how far back in time to import hourly history into Home Assistant.
-4. Click **Submit**.
+   - **Water Utility / Subdomain**: Select your water utility from the searchable dropdown list, or enter a custom subdomain.
+   - Click **Submit** (the integration automatically authenticates and discovers your available data range).
+4. **Step 2: Select historical consumption period**:
+   - **From the beginning**: Import all available history since the meter was installed.
+   - **1 year back**: Import 365 days of history.
+   - **1 month back**: Import 30 days of history.
+   - **From custom specified date**: Choose any exact start date using the calendar picker (useful for move-in dates).
+5. Click **Submit**.
 
 ---
 

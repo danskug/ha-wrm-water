@@ -28,8 +28,10 @@ from .const import (
     BASE_URL,
     CONF_CUSTOMER_ID,
     CONF_HISTORY_DAYS,
+    CONF_HISTORY_MODE,
     CONF_INITIAL_IMPORT_DONE,
     CONF_METER_SERIAL,
+    CONF_START_DATE,
     CONF_STATISTIC_ID,
     CONF_SUBDOMAIN,
     DEFAULT_HISTORY_DAYS,
@@ -190,28 +192,41 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         performed_initial_import = False
 
         if not self._initial_import_done:
-            history_days = str(
-                self.entry.options.get(
-                    CONF_HISTORY_DAYS,
-                    self.entry.data.get(CONF_HISTORY_DAYS, DEFAULT_HISTORY_DAYS),
-                )
+            start_date = self.entry.options.get(
+                CONF_START_DATE,
+                self.entry.data.get(CONF_START_DATE),
             )
-            if history_days == "all":
-                start_date = "2010-01-01"
-            elif history_days == "365":
-                start_date = (now_utc - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
-            elif history_days == "90":
-                start_date = (now_utc - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
-            elif history_days == "30":
-                start_date = (now_utc - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
-            else:
-                start_date = (now_utc - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+            history_mode = self.entry.options.get(
+                CONF_HISTORY_MODE,
+                self.entry.data.get(CONF_HISTORY_MODE, "custom"),
+            )
+
+            if not start_date:
+                # Legacy fallback (< v1.1.0)
+                history_days = str(
+                    self.entry.options.get(
+                        CONF_HISTORY_DAYS,
+                        self.entry.data.get(CONF_HISTORY_DAYS, DEFAULT_HISTORY_DAYS),
+                    )
+                )
+                if history_days == "all":
+                    start_date = "2010-01-01"
+                elif history_days == "365":
+                    start_date = (now_utc - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
+                elif history_days == "90":
+                    start_date = (now_utc - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
+                elif history_days == "30":
+                    start_date = (now_utc - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+                else:
+                    start_date = (now_utc - datetime.timedelta(days=7)).strftime("%Y-%m-%d")
+                history_mode = history_days
+
             self._initial_import_done = True
             performed_initial_import = True
             _LOGGER.info(
                 "Initial historical import: fetching readings from %s (mode: %s)",
                 start_date,
-                history_days,
+                history_mode,
             )
         else:
             # Routine periodic poll: rolling 2-day window (48 hours) to catch new 8h batches

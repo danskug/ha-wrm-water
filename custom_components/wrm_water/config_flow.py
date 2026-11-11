@@ -187,13 +187,8 @@ class WRMWaterOptionsFlowHandler(config_entries.OptionsFlow):
         earliest_m3 = 0.0
         latest_m3 = 0.0
 
-        # Try to obtain discovered earliest reading date from coordinator or query WRM portal
-        coordinator = self.hass.data.get(DOMAIN, {}).get(self.config_entry.entry_id)
-        if coordinator and getattr(coordinator, "discovered_info", None):
-            earliest_date = coordinator.discovered_info.get("earliest_date", earliest_date)
-            earliest_m3 = coordinator.discovered_info.get("earliest_m3", earliest_m3)
-            latest_m3 = coordinator.discovered_info.get("latest_m3", latest_m3)
-        elif customer_id and meter_serial and subdomain:
+        # Always pre-search WRM portal with 2010-01-01 to discover the meter's true lifetime earliest date
+        if customer_id and meter_serial and subdomain:
             try:
                 client = WRMClient(subdomain=subdomain, customer_id=customer_id, meter_serial=meter_serial)
                 data = await self.hass.async_add_executor_job(client.fetch_readings_sync, "2010-01-01")
@@ -206,12 +201,6 @@ class WRMWaterOptionsFlowHandler(config_entries.OptionsFlow):
                     ).strftime("%Y-%m-%d")
                     earliest_m3 = round(float(earliest_row[1]), 3)
                     latest_m3 = round(float(latest_row[1]), 3)
-                    if coordinator:
-                        coordinator.discovered_info = {
-                            "earliest_date": earliest_date,
-                            "earliest_m3": earliest_m3,
-                            "latest_m3": latest_m3,
-                        }
             except Exception as ex:
                 _LOGGER.warning("Could not pre-search historical date range in options flow: %s", ex)
 
@@ -227,10 +216,13 @@ class WRMWaterOptionsFlowHandler(config_entries.OptionsFlow):
             self.hass.config_entries.async_update_entry(self.config_entry, data=new_data)
             return self.async_create_entry(title="", data=user_input)
 
-        # Default calendar to saved start_date if explicitly set, otherwise preset to discovered earliest_date
+        # Default calendar to earliest_date (or explicitly chosen historical custom date)
         current_date = self.config_entry.data.get(CONF_START_DATE)
-        if not current_date:
-            current_date = self.config_entry.options.get(CONF_START_DATE, earliest_date)
+        recent_threshold = (
+            datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
+        ).strftime("%Y-%m-%d")
+        if not current_date or current_date >= recent_threshold:
+            current_date = earliest_date
 
         options_schema = vol.Schema(
             {

@@ -176,7 +176,6 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._initial_import_done: bool = bool(
             entry.data.get(CONF_INITIAL_IMPORT_DONE, False)
         )
-        self.discovered_info: dict[str, Any] = {}
 
         self.client = WRMClient(subdomain, customer_id, meter_serial)
 
@@ -252,21 +251,6 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         current_reading_m3 = round(float(latest_row[1]), 3)
         last_reported = str(latest_row[0])
         last_timestamp = int(latest_row[3])
-
-        # Cache discovered date range for options flow
-        if performed_initial_import or not self.discovered_info:
-            earliest_row = raw_data[-1]
-            earliest_epoch = int(earliest_row[3])
-            earliest_date = datetime.datetime.fromtimestamp(
-                earliest_epoch, tz=datetime.timezone.utc
-            ).strftime("%Y-%m-%d")
-            self.discovered_info = {
-                "earliest_date": earliest_date,
-                "earliest_m3": round(float(earliest_row[1]), 3),
-                "latest_m3": current_reading_m3,
-            }
-        else:
-            self.discovered_info["latest_m3"] = current_reading_m3
 
         # Reverse to chronological order (oldest first)
         chronological_data = list(reversed(raw_data))

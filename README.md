@@ -14,14 +14,9 @@
 
 Home Assistant integration for remote-read smart water meters connected to **WRM Systems** (`wmd.wrm-systems.fi`). **Tested and verified in production with Kaarinan Vesihuolto**, and supports numerous Finnish municipal water utilities and cooperatives using Axioma Qalcosonic W1 ultrasonic meters.
 
-- **Suomeksi (FI)**: Home Assistant Marketplace -integraatio **WRM Systems Oy:n** (`wmd.wrm-systems.fi`) etäluettaville vesimittareille (esim. *Axioma Qalcosonic W1*). Tuo tuntikohtaisen vedenkulutuksen ja mittarilukeman (m³) suoraan Home Assistantin energianäkymään (*Energy Dashboard* / *Long-Term Statistics*). Testattu tuotantokäytössä Kaarinan Vesihuollolla; tukee myös vähintään 16 muuta suomalaista vesilaitosta (katso lista alempana).
-- **Svenska (SE)**: Home Assistant Marketplace-integration för fjärravlästa smarta vattenmätare anslutna till **WRM Systems** (`wmd.wrm-systems.fi`, t.ex. *Axioma Qalcosonic W1*). Importerar timvis vattenförbrukning och mätarställning (m³) direkt till Home Assistants energipanel (*Långtidsstatistik / LTS*). Testad i drift med Kaarinan Vesihuolto och stöder 16+ finska vattenverk.
-
 > ⚠️ **Use at Your Own Risk — Unofficial & Unmaintained Personal Project**
 >
-> - **English**: This is an unofficial personal hobby project shared **"AS IS" without warranty of any kind**. Use it entirely **at your own risk**. The author **does not actively maintain** this repository, does not guarantee compatibility with future Home Assistant or WRM Systems updates, and does not provide technical support.
-> - **Suomeksi**: Tämä on epävirallinen, omaan käyttöön tehty harrasteprojekti, joka jaetaan **sellaisenaan ("AS IS") ilman minkäänlaista takuuta**. Käyttö tapahtuu täysin **omalla vastuulla**. Tekijä **ei ylläpidä** projektia aktiivisesti eikä tarjoa sille tukea.
-> - **Svenska**: Detta är ett inofficiellt privat hobbyprojekt som delas **i befintligt skick ("AS IS") utan några garantier**. Användning sker helt **på egen risk**. Upphovsmannen **underhåller inte** repot aktivt och erbjuder ingen support.
+> This is an unofficial personal hobby project shared **"AS IS" without warranty of any kind**. Use it entirely **at your own risk**. The author **does not actively maintain** this repository, does not guarantee compatibility with future Home Assistant or WRM Systems updates, and does not provide technical support.
 
 ---
 
@@ -35,8 +30,8 @@ Home Assistant integration for remote-read smart water meters connected to **WRM
   Upon setup, the integration queries WRM Systems to automatically discover the meter's exact earliest reported reading date and available historical range. The calendar picker is preset to this date so you can import all available history with a single click, or change it to any custom date (e.g. your move-in date). Once imported, routine 1-hour polls fetch only a lightweight rolling 2-day window (~2.5 KB).
 - 🔒 **Zero External Dependencies**:
   Built using Python standard library tools (`html.parser`, `urllib`, `http.cookiejar`) with automatic CSRF token handling and session re-authentication.
-- 🌐 **Full Localization**:
-  Complete English, Finnish, and Swedish translations (`en.json`, `fi.json`, `sv.json`) for UI dialogs and entity names.
+- 🌐 **Multilingual Language Packs**:
+  Includes complete English, Finnish (suomi), and Swedish (svenska) language packs for all setup dialogs, options, and entity names.
 
 ---
 
@@ -127,9 +122,9 @@ For `kaarinanvesihuolto`, the entities are named `sensor.kaarina_water_*` (for o
 
 ---
 
-## Disclaimer & Support (Ansvarsfriskrivning / Vastuuvapauslauseke)
+## Disclaimer & Support
 
-> ⚠️ **Use at Your Own Risk (Omalla vastuulla / På egen risk)**: This integration is not affiliated with, endorsed by, or supported by WRM Systems Oy or any water utility. It is provided **"AS IS" without warranty of any kind**. You are solely responsible for any use of this integration and any impact on your Home Assistant database or utility account.
+> ⚠️ **Use at Your Own Risk**: This integration is not affiliated with, endorsed by, or supported by WRM Systems Oy or any water utility. It is provided **"AS IS" without warranty of any kind**. You are solely responsible for any use of this integration and any impact on your Home Assistant database or utility account.
 >
 > 🛠️ **No Active Maintenance or Support**: This is a personal project built for the author's own household (with AI assistance) and shared openly in case others find it useful. **The author does not actively maintain this repository**, does not monitor issues, and does not provide user support or bug fixes unless they directly affect the author's own setup. If you need changes or fixes, please fork the repository.
 

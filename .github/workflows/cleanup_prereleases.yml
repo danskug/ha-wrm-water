@@ -1,0 +1,22 @@
+name: Cleanup Pre-releases
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete pre-releases and cleanup tags
+        run: |
+          for tag in v0.9.0-alpha.1 v0.9.0-alpha.2 v0.9.0-alpha.3 v0.9.0-alpha.4 v0.9.0-alpha.5 v0.9.0-alpha.6; do
+            echo "Deleting release $tag..."
+            gh release delete "$tag" --repo danskug/ha-wrm-water --yes --cleanup-tag || true
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -115,7 +115,7 @@ For `kaarinanvesihuolto`, the entities are named `sensor.kaarina_water_*` (for o
 
 | Entity ID | Unit | Description |
 | :--- | :--- | :--- |
-| `sensor.kaarina_water_meter_reading` | m³ | Cumulative water meter reading (`total_increasing`, 3 decimals). Exposes attributes `today_consumption_l`, `yesterday_consumption_l`, `last_24h_consumption_l`, `last_hour_consumption_l`, and `last_reported`. |
+| `sensor.kaarina_water_meter_reading` | m³ | Cumulative water meter reading (`total_increasing`, 3 decimals). Official water source for Home Assistant Energy Dashboard. Exposes attribute `last_reported`. |
 | `sensor.kaarina_water_last_reported` | timestamp | Timestamp when the water meter last transmitted data to the portal. |
 
 ---

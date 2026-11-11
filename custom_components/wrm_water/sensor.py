@@ -102,14 +102,12 @@ class KaarinaWaterMeterReadingSensor(BaseWRMWaterSensor):
         """Return extra attributes."""
         if not self.coordinator.data:
             return {}
-        return {
-            "last_reported": self.coordinator.data.get("last_reported"),
-            "last_hour_consumption_l": self.coordinator.data.get("last_hour_liters"),
-            "today_consumption_l": self.coordinator.data.get("today_liters"),
-            "yesterday_consumption_l": self.coordinator.data.get("yesterday_liters"),
-            "last_24h_consumption_l": self.coordinator.data.get("last_24h_liters"),
-            "last_timestamp": self.coordinator.data.get("last_timestamp"),
-        }
+        attrs: dict[str, Any] = {}
+        if last_rep := self.coordinator.data.get("last_reported"):
+            attrs["last_reported"] = last_rep
+        if serial := self.entry.data.get(CONF_METER_SERIAL):
+            attrs["meter_serial"] = serial
+        return attrs
 
 
 class KaarinaWaterLastReportedSensor(BaseWRMWaterSensor):

@@ -250,36 +250,10 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         latest_row = raw_data[0]
         current_reading_m3 = round(float(latest_row[1]), 3)
         last_reported = str(latest_row[0])
-        last_hour_liters = round(float(latest_row[2]) * 1000.0, 1)
         last_timestamp = int(latest_row[3])
 
         # Reverse to chronological order (oldest first)
         chronological_data = list(reversed(raw_data))
-
-        # Compute today's, yesterday's, and rolling 24h consumption in liters
-        now_local = dt_util.now()
-        today_date = now_local.date()
-        yesterday_date = today_date - datetime.timedelta(days=1)
-        today_liters = 0.0
-        yesterday_liters = 0.0
-        for row in chronological_data[-72:]:
-            try:
-                hour_m3 = float(row[2])
-                epoch_s = int(row[3])
-                row_local_dt = dt_util.as_local(
-                    datetime.datetime.fromtimestamp(epoch_s, tz=datetime.timezone.utc)
-                )
-                row_date = row_local_dt.date()
-                if row_date == today_date:
-                    today_liters += hour_m3 * 1000.0
-                elif row_date == yesterday_date:
-                    yesterday_liters += hour_m3 * 1000.0
-            except Exception:
-                continue
-
-        last_24h_liters = sum(
-            float(r[2]) * 1000.0 for r in chronological_data[-24:] if len(r) >= 3
-        )
 
         # Automatically import hourly statistics into Home Assistant LTS
         try:
@@ -296,11 +270,6 @@ class WRMWaterDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "current_reading_m3": current_reading_m3,
             "last_reported": last_reported,
             "last_timestamp": last_timestamp,
-            "last_hour_liters": last_hour_liters,
-            "today_liters": round(today_liters, 1),
-            "yesterday_liters": round(yesterday_liters, 1),
-            "last_24h_liters": round(last_24h_liters, 1),
-            "readings": chronological_data,
         }
 
     async def _async_import_lts_statistics(self, chronological_data: list[list[Any]]) -> None:

@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="images/logo.png" alt="WRM Systems" width="420">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/danskug/ha-wrm-water/main/images/logo_white.png">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/danskug/ha-wrm-water/main/images/logo.png">
+    <img src="https://raw.githubusercontent.com/danskug/ha-wrm-water/main/images/logo_white.png" alt="WRM Systems" width="420">
+  </picture>
 </p>
 
 # WRM Systems Water for Home Assistant
@@ -10,11 +14,11 @@
 
 Home Assistant integration for remote-read smart water meters connected to **WRM Systems** (`wmd.wrm-systems.fi`). **Tested and verified in production with Kaarinan Vesihuolto**, and supports numerous Finnish municipal water utilities and cooperatives using Axioma Qalcosonic W1 ultrasonic meters.
 
-- 🇫🇮 **Suomeksi**: Home Assistant (HACS) -integraatio **WRM Systems Oy:n** (`wmd.wrm-systems.fi`) etäluettaville vesimittareille (esim. *Axioma Qalcosonic W1*). Tuo tuntikohtaisen vedenkulutuksen ja mittarilukeman ($\text{m}^3$) suoraan Home Assistantin Energianäkymään (*Energy Dashboard* / *Long-Term Statistics*). Toimii mm. seuraavien vesilaitosten kulutusseurannassa: *Kaarinan Vesihuolto, Oulun Vesi, Kangasalan Vesi, Kirkkonummen Vesi, Salon Vesi, Seinäjoen Vesi, Ylöjärven Vesi, Vihdin Vesi, Kajaanin Vesi, Sastamalan Vesi, Loimaan Vesi, Orimattilan Vesi, Keski-Savon Vesi, Suonenjoen Vesi, Lumijoen Vesi, Vaalan Vesi ja Lämpö* sekä *Pyhä-Luosto Vesi*.
-- 🇸🇪 **På svenska**: Home Assistant (HACS)-integration för fjärravlästa smarta vattenmätare anslutna till **WRM Systems** (`wmd.wrm-systems.fi`, t.ex. *Axioma Qalcosonic W1*). Importerar timvis vattenförbrukning och mätarställning ($\text{m}^3$) direkt till Home Assistants Energipanel (*Långtidsstatistik / LTS*).
+- **Suomeksi (FI)**: Home Assistant (HACS) -integraatio **WRM Systems Oy:n** (`wmd.wrm-systems.fi`) etäluettaville vesimittareille (esim. *Axioma Qalcosonic W1*). Tuo tuntikohtaisen vedenkulutuksen ja mittarilukeman (m³) suoraan Home Assistantin energianäkymään (*Energy Dashboard* / *Long-Term Statistics*). Testattu tuotantokäytössä Kaarinan Vesihuollolla; tukee myös vähintään 16 muuta suomalaista vesilaitosta (katso lista alempana).
+- **Svenska (SE)**: Home Assistant (HACS)-integration för fjärravlästa smarta vattenmätare anslutna till **WRM Systems** (`wmd.wrm-systems.fi`, t.ex. *Axioma Qalcosonic W1*). Importerar timvis vattenförbrukning och mätarställning (m³) direkt till Home Assistants energipanel (*Långtidsstatistik / LTS*). Testad i drift med Kaarinan Vesihuolto och stöder 16+ finska vattenverk.
 
-> [!WARNING]
-> **Use at Your Own Risk — Unofficial & Unmaintained Personal Project**
+> ⚠️ **Use at Your Own Risk — Unofficial & Unmaintained Personal Project**
+>
 > - **English**: This is an unofficial personal hobby project shared **"AS IS" without warranty of any kind**. Use it entirely **at your own risk**. The author **does not actively maintain** this repository, does not guarantee compatibility with future Home Assistant or WRM Systems updates, and does not provide technical support.
 > - **Suomeksi**: Tämä on epävirallinen, omaan käyttöön tehty harrasteprojekti, joka jaetaan **sellaisenaan ("AS IS") ilman minkäänlaista takuuta**. Käyttö tapahtuu täysin **omalla vastuulla**. Tekijä **ei ylläpidä** projektia aktiivisesti eikä tarjoa sille tukea.
 > - **Svenska**: Detta är ett inofficiellt privat hobbyprojekt som delas **i befintligt skick ("AS IS") utan några garantier**. Användning sker helt **på egen risk**. Upphovsmannen **underhåller inte** repot aktivt och erbjuder ingen support.
@@ -46,7 +50,7 @@ Click the button below to add this repository directly to your Home Assistant in
 ### Manual HACS Install
 1. Make sure [HACS](https://hacs.xyz/) is installed.
 2. In Home Assistant, open **HACS**.
-3. Click the three dots (top right) $\rightarrow$ **Custom repositories**.
+3. Click the three dots (top right) → **Custom repositories**.
 4. Add repository URL:
    ```
    https://github.com/danskug/ha-wrm-water
@@ -59,7 +63,7 @@ Click the button below to add this repository directly to your Home Assistant in
 
 ## Configuration
 
-1. In Home Assistant, go to **Settings $\rightarrow$ Devices & Services $\rightarrow$ Add Integration**.
+1. In Home Assistant, go to **Settings → Devices & Services → Add Integration**.
 2. Search for **WRM Systems Water** (or **WRM Systems Vesi**).
 3. Enter your portal credentials:
    - **Customer / Payer Number (Maksajan numero)**: Found on your water bill (e.g. `12345`).
@@ -74,8 +78,7 @@ Click the button below to add this repository directly to your Home Assistant in
 
 Any water utility using the WRM Systems platform (`wmd.wrm-systems.fi`) is supported. Subdomains on WRM Systems are all lowercase and do not contain hyphens or spaces. To find your subdomain, open your water utility's consumption portal login page in your browser — the subdomain is the part of the web address immediately following `wmd.wrm-systems.fi/`.
 
-> [!NOTE]
-> The integration is **tested and verified in production with Kaarinan Vesihuolto**.
+> ℹ️ **Note**: The integration is **tested and verified in production with Kaarinan Vesihuolto**.
 
 The following 17 water utilities are verified and available directly in the setup dropdown:
 
@@ -107,25 +110,25 @@ For `kaarinanvesihuolto`, the entities are named `sensor.kaarina_water_*` (for o
 
 | Entity ID | Unit | Description |
 | :--- | :--- | :--- |
-| `sensor.kaarina_water_meter_reading` | $\text{m}^3$ | Cumulative water meter reading (`total_increasing`, 3 decimals). Exposes attributes `today_consumption_l`, `yesterday_consumption_l`, `last_24h_consumption_l`, `last_hour_consumption_l`, and `last_reported`. |
+| `sensor.kaarina_water_meter_reading` | m³ | Cumulative water meter reading (`total_increasing`, 3 decimals). Exposes attributes `today_consumption_l`, `yesterday_consumption_l`, `last_24h_consumption_l`, `last_hour_consumption_l`, and `last_reported`. |
 | `sensor.kaarina_water_last_reported` | timestamp | Timestamp when the water meter last transmitted data to the portal. |
 
 ---
 
 ## Energy Dashboard Setup
 
-1. Go to **Settings $\rightarrow$ Dashboards $\rightarrow$ Energy**.
+1. Go to **Settings → Dashboards → Energy**.
 2. Under **Water consumption**, click **Add water source**.
 3. Select `sensor.kaarina_water_meter_reading`.
-4. (Optional) Set your static water price per $\text{m}^3$ (e.g. `6.15` EUR/$\text{m}^3$ in Kaarina).
+4. (Optional) Set your static water price per m³ (e.g. `6.15` EUR/m³ in Kaarina).
 
 ---
 
 ## Disclaimer & Support (Ansvarsfriskrivning / Vastuuvapauslauseke)
 
-> [!CAUTION]
-> - ⚠️ **Use at Your Own Risk (Omalla vastuulla / På egen risk)**: This integration is not affiliated with, endorsed by, or supported by WRM Systems Oy or any water utility. It is provided **"AS IS" without warranty of any kind**. You are solely responsible for any use of this integration and any impact on your Home Assistant database or utility account.
-> - 🛠️ **No Active Maintenance or Support**: This is a personal project built for the author's own household (with AI assistance) and shared openly in case others find it useful. **The author does not actively maintain this repository**, does not monitor issues, and does not provide user support or bug fixes unless they directly affect the author's own setup. If you need changes or fixes, please fork the repository.
+> ⚠️ **Use at Your Own Risk (Omalla vastuulla / På egen risk)**: This integration is not affiliated with, endorsed by, or supported by WRM Systems Oy or any water utility. It is provided **"AS IS" without warranty of any kind**. You are solely responsible for any use of this integration and any impact on your Home Assistant database or utility account.
+>
+> 🛠️ **No Active Maintenance or Support**: This is a personal project built for the author's own household (with AI assistance) and shared openly in case others find it useful. **The author does not actively maintain this repository**, does not monitor issues, and does not provide user support or bug fixes unless they directly affect the author's own setup. If you need changes or fixes, please fork the repository.
 
 ---
 
